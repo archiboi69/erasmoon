@@ -1,0 +1,1254 @@
+/* ===================================
+   Root Variables
+=================================== */
+
+:root {
+    
+    /* Colors */
+    --color-primary: #3D46F2;
+    --color-secondary: #636AF2;
+    --color-tertiary: #8D92F2;
+    --color-quaternary: #D5D7F2;
+    --color-accent: #F2AE30;
+    /* Greys */
+    --color-background: #191919;
+    --color-background-brighter: #222222;
+    --color-text: #FFFFFF;
+    --color-text-faint: #999999;
+    /* Fonts */
+    --font-family-base: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    --font-family-numbers: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-family-logo: 'Futura', serif;
+    --font-size-base: 16px;
+    /* Spacing */
+    --spacing-base: 1rem;
+    /* Padding */
+    --card-padding: 1rem;
+    /* Border Radius */
+    --border-radius-base: 10px;
+    --border-radius-small: 5px;
+    /* Touch targets */
+    --touch-target-size: 44px;
+
+}
+
+/* ===================================
+   Base/Reset Styles
+=================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-base);
+    line-height: 1.5;
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+@media (min-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+}
+/* Separator lines between sections */
+section {
+    border-bottom: 1px solid var(--color-text-faint);
+    padding-bottom: 20px; /* Space below the content */
+    margin-bottom: 20px; /* Space above the next section */
+}
+
+/* Remove the border from the last section to avoid an extra line at the end */
+section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* ===================================
+   Layout Styles
+=================================== */
+/* Styles for the layout */
+
+.layout {
+    width: 100%;
+    padding: 0 10px; /* Add horizontal padding */
+    margin: 0 auto;
+    max-width: 100%; /* Ensure it doesn't exceed the viewport width */
+}
+
+@media (min-width: 768px) {
+    .layout {
+        max-width: 768px; /* Limit the container width on desktop */
+        padding: 0 20px; /* Increase horizontal padding if desired */
+    }
+}
+
+/* ===================================
+   Header/Footer Component
+=================================== */
+
+/* Styles for the header */
+.header,
+.footer {
+    border-radius: var(--border-radius-base);
+    margin: 10px;
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    padding: 10px 0;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+.footer {
+    margin-top: 20px;
+}
+.footer__back-button {
+    background-color: transparent;
+    color: var(--color-text);
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.header__container,
+.footer__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.header__logo {
+    display: flex;
+    font-family: var(--font-family-logo);
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--color-text);
+}
+
+.header__join-button {
+    background-color: transparent;
+    color: var(--color-text);
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: 1px solid var(--color-text);
+    padding: 5px 20px;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    .header__container {
+        padding: 0 20px;
+    }
+}
+/* ===================================
+   Banner Component
+=================================== */
+
+/* Styles for the banner */
+
+.banner {
+    padding: 10px;
+    border: none;
+}
+
+/* ===================================
+   Search Bar Component
+=================================== */
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar__toggle-button {
+    height: var(--touch-target-size);
+    width: 100%;
+    max-width: 100px;
+    background-color: var(--color-background-brighter);
+    color: var(--color-text);
+    font-size: 1em;
+    font-weight: bold;
+    padding: 0 5px;
+    cursor: pointer;
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--color-text-faint);
+    transition: all 0.3s ease;
+}
+
+.search-bar__toggle-button:hover {
+    background-color: var(--color-secondary);
+}
+
+.search-bar__toggle-button--active {
+    background-color: var(--color-primary);
+    border: none;
+}
+
+.search-bar__search-container {
+    flex: 1;
+}
+
+.search-bar__search-container input {
+    width: 100%;
+    height: var(--touch-target-size);
+    padding: 0 15px;
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-faint);
+    font-size: 1em;
+    border: 1px solid var(--color-text-faint);
+    border-radius: var(--border-radius-small);
+    outline: none;
+}
+
+/* ===================================
+   Results Bar Component
+=================================== */
+
+.results-bar {
+    display: flex;
+    align-items: bottom;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.results-bar__count {
+    color: var(--color-text-faint);
+}
+
+.results-bar__sort-container {
+    display: flex;
+    align-items: center;
+}
+
+.results-bar__sort-container select {
+    height: auto;
+    padding: 0 15px;
+    font-size: 16px;
+    outline: none;
+    border: none;
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+/* ===================================
+   City Grid Component
+=================================== */
+
+/* City Grid */
+.city-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+/* City Card Link */
+.city-grid__link {
+    display: block;
+    flex: 0 1 100%;
+    max-width: 100%;
+    height: 260px;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+}
+
+@media (min-width: 768px) {
+    .city-grid__link {
+        flex: 0 0 calc(50% - 5px); /* Two cards per row */
+        max-width: calc(50% - 5px);
+        height: 300px; /* Set a fixed height if desired */
+    }
+}
+
+/* City Card */
+.city-grid__card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--border-radius-base);
+    transition: all 0.3s ease;
+}
+
+/* Card Content */
+.city-grid__card-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--card-padding);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+/* Rank (Top Left) */
+.city-grid__rank {
+    position: absolute;
+    top: var(--card-padding); 
+    left: var(--card-padding);
+    line-height: 1;
+    margin: 0;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-family-numbers);
+    font-weight: bold;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.city-grid__rank span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Details (Top Right) */
+.city-grid__details {
+    position: absolute;
+    top: calc(var(--card-padding) - 7px);
+    right: var(--card-padding);
+    text-align: right;
+}
+
+.city-grid__details p {
+    margin: 0;
+    font-size: 1em;
+    font-weight: normal;
+}
+
+.city-grid__details .city-grid__university-count,
+.city-grid__details .city-grid__erasmus-population {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.city-grid__details p small {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+/* Center Content */
+.city-grid__center {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.city-grid__name, .city-grid__country {
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Temperature Range (Bottom Left) */
+.city-grid__temp-range-container {
+    position: absolute;
+    bottom: var(--card-padding);
+    left: var(--card-padding);
+    width: calc(40% - 30px);
+}
+
+.temp-range {
+    position: relative;
+    flex-grow: 1;
+    height: 10px;
+    background-color: var(--color-background-brighter);
+    border-radius: var(--border-radius-small);
+}
+
+.city-grid__temp-range {
+    width: 100%;
+    background-color: rgba(240, 240, 240, 0.3);
+}
+
+/* Temperature Bar */
+.temp-bar {
+    position: absolute;
+    height: 10px; /* Adjust as needed */
+    border-radius: var(--border-radius-small);
+}
+
+.temp-bar__label {
+    position: absolute;
+    font-size: 12px;
+    bottom: 10px;
+}
+
+.temp-bar__label--low {
+    left: 0;
+    transform: translate(-50%, 0);
+}
+
+.temp-bar__label--high {
+    right: 0;
+    transform: translate(50%, 0);
+}
+
+/* Budget (Bottom Right) */
+.city-grid__budget {
+    position: absolute;
+    bottom: calc(var(--card-padding) - 7px);
+    right: var(--card-padding);
+    text-align: right;
+}
+
+.city-grid__budget .city-grid__monthly-budget {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.city-grid__budget p {
+    font-size: 1em;
+    margin: 0;
+
+}
+
+
+/* Moon Score */
+.city-grid__moon-score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    color: white;
+    width: calc(100% - 40px);
+    margin-top: 20px;
+}
+
+.city-grid__moon-score-value {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.city-grid__tap-for-details {
+    position: relative;
+    background-color: var(--color-primary);
+    padding: 2px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* Ratings */
+.city-grid__rating {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    color: var(--color-text);
+    width: calc(100% - 40px);
+}
+
+.city-grid__rating-label {
+    color: var(--color-text);
+}
+
+.city-grid__rating-bar {
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.city-grid__rating-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+    background-color: var(--color-accent);
+}
+
+/* Positioning for each rating */
+.city-grid__rating--popularity { top: 25%; }
+.city-grid__rating--cost { top: 40%; }
+.city-grid__rating--safety { top: 55%; }
+.city-grid__rating--public-transport { top: 70%; }
+.city-grid__rating--language { top: 85%; }
+
+/* Styles when 'show-metrics' class is active */
+.city-grid__card.show-metrics .city-grid__card-content {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.city-grid__card.show-metrics .city-grid__rank,
+.city-grid__card.show-metrics .city-grid__details,
+.city-grid__card.show-metrics .city-grid__center,
+.city-grid__card.show-metrics .city-grid__budget,
+.city-grid__card.show-metrics .city-grid__temp-range-container {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.city-grid__card.show-metrics .city-grid__rating,
+.city-grid__card.show-metrics .city-grid__moon-score {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Hover Effects for Desktop */
+@media (hover: hover) and (pointer: fine) {
+    .city-grid__card:hover .city-grid__card-content {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .city-grid__card:hover .city-grid__rank,
+    .city-grid__card:hover .city-grid__details,
+    .city-grid__card:hover .city-grid__center,
+    .city-grid__card:hover .city-grid__budget,
+    .city-grid__card:hover .city-grid__temp-range-container {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .city-grid__card:hover .city-grid__rating,
+    .city-grid__card:hover .city-grid__moon-score {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/* ===================================
+   Feedback Button Component
+=================================== */
+
+.feedback-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Ensure the emoji itself doesn't have any unexpected margins */
+.feedback-button span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* ===================================
+   Popup Overlay Base Styles
+=================================== */
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1001; /* Adjust as needed */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Include if needed */
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Adjust z-index for filter-popup if needed */
+.filter-popup {
+    z-index: 1002; /* Higher z-index if necessary */
+}
+
+/* ===================================
+   Popup Content Base Styles
+=================================== */
+
+.popup-content {
+    background-color: var(--color-background);
+    margin: 15% auto; /* Adjust as needed */
+    padding: 20px;
+    border: 1px solid var(--color-text-faint);
+    width: 80%;
+    max-width: 600px; /* Adjust as needed */
+    border-radius: var(--border-radius-base);
+    position: relative;
+}
+
+/* ===================================
+   Popup Close Button Base Styles
+=================================== */
+
+.popup-close-button {
+    color: var(--color-text-faint);
+    background-color: transparent;
+    border: none;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 0px;
+    right: 10px;
+}
+
+.popup-close-button:hover {
+    color: var(--color-text);
+}
+
+/* ===================================
+   Filter Popup Specific Styles
+=================================== */
+
+/* Language select container */
+.filter-popup__language-select-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Language select label */
+.filter-popup__language-select-label {
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+/* Language select input */
+.filter-popup__language-select {
+    height: auto;
+    padding: 0 15px;
+    font-size: 16px;
+    background-color: var(--color-background-brighter);
+    border-radius: var(--border-radius-small);
+    outline: none;
+    border: 1px solid var(--color-text-faint);
+    color: var(--color-text);
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Filter section */
+.filter-popup__section {
+    padding-bottom: 10px;
+}
+
+/* Filter row */
+.filter-popup__filter-row {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    overflow-x: auto;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0;
+}
+
+/* Common styles for all filter buttons */
+.filter-popup__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: var(--touch-target-size);
+    white-space: nowrap;
+    padding: 8px 16px;
+    color: var(--color-text);
+    font-size: 14px;
+    background-color: var(--color-background-brighter);
+    border: 1px solid var(--color-text-faint);
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Active state for buttons */
+.filter-popup__button--active {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    font-weight: bold;
+    border: none;
+}
+
+/* ===================================
+   Feedback Popup Specific Styles
+=================================== */
+
+.feedback-popup__content {
+    /* Override max-width if necessary */
+    max-width: 500px; /* Specific to feedback popup */
+}
+
+.feedback-popup__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--color-text);
+}
+
+.feedback-popup__textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background-secondary);
+    color: var(--color-text);
+}
+
+.feedback-popup__submit-button {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+}
+
+.feedback-popup__submit-button:hover {
+    background-color: var(--color-secondary); /* Adjust as needed */
+}
+
+/* ===================================
+   Join Popup Specific Styles
+=================================== */
+
+.join-popup__content {
+    max-width: 400px;
+}
+
+.join-popup__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--color-text);
+}
+
+.join-popup__input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--color-text-faint);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background-secondary);
+    color: var(--color-text);
+}
+
+.join-popup__gdpr-notice {
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: var(--color-text-faint);
+}
+
+.join-popup__submit-button {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+}
+
+.join-popup__submit-button:hover {
+    background-color: var(--color-secondary);
+}
+
+.join-popup__message {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* ===================================
+   City Detail Page Styles
+=================================== */
+/* ===================================
+   Hero Section Styles
+=================================== */
+.hero {
+    border: none;
+    padding: 0;
+}
+
+.hero__container {
+    position: relative;
+    padding: 0;
+    border: 0;
+}
+
+.hero__image-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.hero__image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Back Arrow Link */
+.hero__back-arrow {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: inline-block;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 15px;
+    border-radius: var(--border-radius-small);
+    z-index: 10;
+}
+
+.hero__back-arrow:hover {
+    color: var(--color-accent);
+}
+
+.hero__image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: var(--border-radius-base);
+}
+
+.hero__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    padding-top: 5px;
+    border-radius: 5px;
+}
+
+.hero__name {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.hero__country {
+    font-size: 1.2em;
+    margin-top: 5px;
+    color: var(--color-text-faint);
+}
+
+.hero__native-info {
+    margin-top: 5px;
+    color: var(--color-text-faint);
+}
+
+.hero__native-name {
+    font-size: 0.9em;
+}
+
+/* ===================================
+   Tabs Section Styles
+=================================== */
+
+.tabs {
+    margin-top: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.tabs__list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.tabs__item {
+    margin-right: 20px;
+    padding: 0 10px;
+    border-radius: var(--border-radius-small);
+}
+
+.tabs__link {
+    display: inline-block;
+    padding: 10px 0;
+    text-decoration: none;
+    color: var(--color-text-faint);
+    font-size: 16px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.tabs__link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -1px;
+    left: 0;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.tabs__link:hover::after {
+    background-color: var(--color-text-faint);
+}
+
+.tabs__link--active {
+    font-weight: bold;
+    color: var(--color-accent);
+}
+
+.tabs__link--active::after {
+    background-color: var(--color-accent);
+    height: 4px; /* Thicker bottom border for active tab */
+}
+
+
+/* ===================================
+   Overview Section Styles
+=================================== */
+
+.overview {
+    margin-top: 30px;
+    line-height: 1.6;
+}
+
+.overview__title {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+.overview__subsection--ratings {
+    margin-bottom: 20px;
+}
+
+.overview__subsection--guide {
+    margin-top: 20px;
+}
+
+
+/* ===================================
+   Details Ratings Styles
+=================================== */
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.rating__label {
+    margin-right: 10px;
+    min-width: 150px;
+}
+
+.rating__label--moon-score,
+.rating__value--moon-score {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.rating__value {
+    margin-left: 10px;
+}
+
+.rating__bar {
+    flex: 1;
+    height: 10px;
+    background-color: var(--color-background-brighter);
+    border-radius: var(--border-radius-small);
+    overflow: hidden;
+    position: relative;
+}
+
+.rating__fill {
+    height: 100%;
+    background-color: var(--color-accent);
+    border-radius: var(--border-radius-small);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+/* Guide Content Styles */
+.overview__guide-content {
+    margin-bottom: 20px;
+    position: relative;
+    display: inline;
+    white-space: pre-line;
+}
+
+.overview__guide-preview {
+    display: inline;
+}
+
+.overview__guide-preview::after {
+    content: '...';
+}
+
+.overview__guide-full {
+    display: none;
+    white-space: wrap;
+}
+
+.overview__read-more-button {
+    background: none;
+    border: none;
+    color: var(--color-tertiary);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+    display: inline;
+    margin-left: 5px;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.overview__read-more-button:hover {
+    color: var(--color-quaternary);
+}
+
+/* ===================================
+    Weather Section Styles
+=================================== */
+/* Temperature Range (Bottom Left) */
+
+.weather__detail {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 20px;
+    max-width: 600px;
+    color: var(--color-text-faint);
+}
+.weather__detail p {
+    margin-bottom: 10px;
+}
+.weather__detail .temp-range-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.weather__detail .temp-range-container::before {
+    content: attr(data-month);
+    width: 80px; /* Fixed width for month labels */
+    font-size: 0.9em;
+    margin-right: 10px;
+}
+
+
+
+.weather__detail .temp-bar__label {
+    font-size: 0.8em;
+    position: absolute;
+    bottom: 10px;
+}
+
+.weather__detail .temp-bar__label--low {
+    left: 0;
+    transform: translateX(-85%);
+}
+
+.weather__detail .temp-bar__label--high {
+    right: 0;
+    transform: translateX(100%);
+}
+
+/* ===================================
+   Budget Section Styles
+=================================== */
+
+.budget {
+    margin-top: 30px;
+}
+
+.budget__title {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+.budget__breakdown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.budget__chart {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.budget__table {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.budget__item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--color-background-brighter);
+}
+
+.budget__item:last-child {
+    border-bottom: none;
+}
+
+.budget__label {
+    font-weight: bold;
+}
+
+.budget__value {
+    font-family: var(--font-family-numbers);
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+    .budget__info {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+
+    .budget__chart {
+        margin-bottom: 0;
+        margin-right: 20px;
+    }
+
+    .budget__details {
+        margin-left: 20px;
+    }
+}
+
+
+/* ===================================
+   Universities Section Styles
+=================================== */
+
+.universities {
+    margin-top: 30px;
+}
+
+.universities__title {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+.universities__map {
+    height: 400px;
+    margin-bottom: 20px;
+}
+
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(80%);
+}
+
+.universities__list {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+.universities__item {
+    margin-bottom: 15px;
+}
+
+.universities__name {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.universities__details {
+    margin: 5px 0;
+}
+
+.universities__link {
+    color: var(--color-tertiary);
+    text-decoration: none;
+}
+
+.universities__link:hover {
+    text-decoration: underline;
+}
+
+/* University Marker Styles */
+.university-marker {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+    text-align: center;
+}
+
+.university-marker__emoji {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+.university-marker__number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-55%, -50%);
+    font-family: var(--font-family-numbers);
+    font-weight: bold;
+    font-size: 16px;
+    color: black;
+}

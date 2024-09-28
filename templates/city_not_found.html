@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Not Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>City Not Found</h1>
+    <p>Sorry, we couldn't find any information for the city: {{ city_name }}</p>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

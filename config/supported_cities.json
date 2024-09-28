@@ -1,0 +1,802 @@
+[
+  {
+    "eurostat_code": "ES025C",
+    "name": "A Coruña",
+    "standard_english_name": "A Coruña"
+  },
+  {
+    "eurostat_code": "DE086C",
+    "name": "Aachen",
+    "standard_english_name": "Aachen"
+  },
+  {
+    "eurostat_code": "DK002C",
+    "name": "Århus",
+    "standard_english_name": "Aarhus"
+  },
+  {
+    "eurostat_code": "ES021C",
+    "name": "Alicante/Alacant",
+    "standard_english_name": "Alicante"
+  },
+  {
+    "eurostat_code": "ES065C",
+    "name": "Almería",
+    "standard_english_name": "Almería"
+  },
+  {
+    "eurostat_code": "NL001C",
+    "name": "Amsterdam",
+    "standard_english_name": "Amsterdam"
+  },
+  {
+    "eurostat_code": "BE002C",
+    "name": "Antwerpen",
+    "standard_english_name": "Antwerp"
+  },
+  {
+    "eurostat_code": "EL001C",
+    "name": "Athina",
+    "standard_english_name": "Athens"
+  },
+  {
+    "eurostat_code": "PT008C",
+    "name": "Aveiro",
+    "standard_english_name": "Aveiro"
+  },
+  {
+    "eurostat_code": "ES002C",
+    "name": "Barcelona",
+    "standard_english_name": "Barcelona"
+  },
+  {
+    "eurostat_code": "IT008C",
+    "name": "Bari",
+    "standard_english_name": "Bari"
+  },
+  {
+    "eurostat_code": "DE001C",
+    "name": "Berlin",
+    "standard_english_name": "Berlin"
+  },
+  {
+    "eurostat_code": "CH001C",
+    "name": "Bern",
+    "standard_english_name": "Bern"
+  },
+  {
+    "eurostat_code": "PL011C",
+    "name": "Białystok",
+    "standard_english_name": "Białystok"
+  },
+  {
+    "eurostat_code": "ES019C",
+    "name": "Bilbao",
+    "standard_english_name": "Bilbao"
+  },
+  {
+    "eurostat_code": "UK002C",
+    "name": "Birmingham",
+    "standard_english_name": "Birmingham"
+  },
+  {
+    "eurostat_code": "IT009C",
+    "name": "Bologna",
+    "standard_english_name": "Bologna"
+  },
+  {
+    "eurostat_code": "FR005C",
+    "name": "Bordeaux",
+    "standard_english_name": "Bordeaux"
+  },
+  {
+    "eurostat_code": "SK001C",
+    "name": "Bratislava",
+    "standard_english_name": "Bratislava"
+  },
+  {
+    "eurostat_code": "DE012C",
+    "name": "Bremen",
+    "standard_english_name": "Bremen"
+  },
+  {
+    "eurostat_code": "CZ002C",
+    "name": "Brno",
+    "standard_english_name": "Brno"
+  },
+  {
+    "eurostat_code": "BE001C",
+    "name": "Bruxelles/Brussel",
+    "standard_english_name": "Brussels"
+  },
+  {
+    "eurostat_code": "RO001C",
+    "name": "București",
+    "standard_english_name": "Bucharest"
+  },
+  {
+    "eurostat_code": "HU001C",
+    "name": "Budapest",
+    "standard_english_name": "Budapest"
+  },
+  {
+    "eurostat_code": "ES071C",
+    "name": "Cádiz",
+    "standard_english_name": "Cádiz"
+  },
+  {
+    "eurostat_code": "IT026C",
+    "name": "Cagliari",
+    "standard_english_name": "Cagliari"
+  },
+  {
+    "eurostat_code": "RO002C",
+    "name": "Cluj-Napoca",
+    "standard_english_name": "Cluj-Napoca"
+  },
+  {
+    "eurostat_code": "PT005C",
+    "name": "Coimbra",
+    "standard_english_name": "Coimbra"
+  },
+  {
+    "eurostat_code": "DE004C",
+    "name": "Köln",
+    "standard_english_name": "Cologne"
+  },
+  {
+    "eurostat_code": "DE051C",
+    "name": "Konstanz",
+    "standard_english_name": "Konstanz"
+  },
+  {
+    "eurostat_code": "DK001C",
+    "name": "København",
+    "standard_english_name": "Copenhagen"
+  },
+  {
+    "eurostat_code": "ES020C",
+    "name": "Córdoba",
+    "standard_english_name": "Córdoba"
+  },
+  {
+    "eurostat_code": "IE002C",
+    "name": "Cork",
+    "standard_english_name": "Cork"
+  },
+  {
+    "eurostat_code": "NL048C",
+    "name": "Delft",
+    "standard_english_name": "Delft"
+  },
+  {
+    "eurostat_code": "DE009C",
+    "name": "Dresden",
+    "standard_english_name": "Dresden"
+  },
+  {
+    "eurostat_code": "IE001C",
+    "name": "Dublin",
+    "standard_english_name": "Dublin"
+  },
+  {
+    "eurostat_code": "DE011C",
+    "name": "Düsseldorf",
+    "standard_english_name": "Düsseldorf"
+  },
+  {
+    "eurostat_code": "UK007C",
+    "name": "Edinburgh",
+    "standard_english_name": "Edinburgh"
+  },
+  {
+    "eurostat_code": "NL014C",
+    "name": "Eindhoven",
+    "standard_english_name": "Eindhoven"
+  },
+  {
+    "eurostat_code": "NL015C",
+    "name": "Enschede",
+    "standard_english_name": "Enschede"
+  },
+  {
+    "eurostat_code": "FI005C",
+    "name": "Espoo/Esbo",
+    "standard_english_name": "Espoo"
+  },
+  {
+    "eurostat_code": "IT007C",
+    "name": "Firenze",
+    "standard_english_name": "Florence"
+  },
+  {
+    "eurostat_code": "IT030C",
+    "name": "Foggia",
+    "standard_english_name": "Foggia"
+  },
+  {
+    "eurostat_code": "DE005C",
+    "name": "Frankfurt am Main",
+    "standard_english_name": "Frankfurt am Main"
+  },
+  {
+    "eurostat_code": "DE025C",
+    "name": "Freiburg im Breisgau",
+    "standard_english_name": "Freiburg"
+  },
+  {
+    "eurostat_code": "IE004C",
+    "name": "Galway",
+    "standard_english_name": "Galway"
+  },
+  {
+    "eurostat_code": "PL006C",
+    "name": "Gdańsk",
+    "standard_english_name": "Gdańsk"
+  },
+  {
+    "eurostat_code": "IT006C",
+    "name": "Genova",
+    "standard_english_name": "Genoa"
+  },
+  {
+    "eurostat_code": "BE003C",
+    "name": "Gent",
+    "standard_english_name": "Ghent"
+  },
+  {
+    "eurostat_code": "UK004C",
+    "name": "Glasgow",
+    "standard_english_name": "Glasgow"
+  },
+  {
+    "eurostat_code": "SE002C",
+    "name": "Göteborg",
+    "standard_english_name": "Gothenburg"
+  },
+  {
+    "eurostat_code": "ES059C",
+    "name": "Granada",
+    "standard_english_name": "Granada"
+  },
+  {
+    "eurostat_code": "AT002C",
+    "name": "Graz",
+    "standard_english_name": "Graz"
+  },
+  {
+    "eurostat_code": "FR012C",
+    "name": "Grenoble",
+    "standard_english_name": "Grenoble"
+  },
+  {
+    "eurostat_code": "NL018C",
+    "name": "Groningen",
+    "standard_english_name": "Groningen"
+  },
+  {
+    "eurostat_code": "DE002C",
+    "name": "Hamburg",
+    "standard_english_name": "Hamburg"
+  },
+  {
+    "eurostat_code": "DE100C",
+    "name": "Heeurostat_codeelberg",
+    "standard_english_name": "Heeurostat_codeelberg"
+  },
+  {
+    "eurostat_code": "FI001C",
+    "name": "Helsinki/Helsingfors",
+    "standard_english_name": "Helsinki"
+  },
+  {
+    "eurostat_code": "ES070C",
+    "name": "Huelva",
+    "standard_english_name": "Huelva"
+  },
+  {
+    "eurostat_code": "AT005C",
+    "name": "Innsbruck",
+    "standard_english_name": "Innsbruck"
+  },
+  {
+    "eurostat_code": "TR012C",
+    "name": "İstanbul",
+    "standard_english_name": "Istanbul"
+  },
+  {
+    "eurostat_code": "FI009C",
+    "name": "Jyväskylä",
+    "standard_english_name": "Jyväskylä"
+  },
+  {
+    "eurostat_code": "DE033C",
+    "name": "Karlsruhe",
+    "standard_english_name": "Karlsruhe"
+  },
+  {
+    "eurostat_code": "PL010C",
+    "name": "Katowice",
+    "standard_english_name": "Katowice"
+  },
+  {
+    "eurostat_code": "LT002C",
+    "name": "Kaunas",
+    "standard_english_name": "Kaunas"
+  },
+  {
+    "eurostat_code": "PL003C",
+    "name": "Kraków",
+    "standard_english_name": "Kraków"
+  },
+  {
+    "eurostat_code": "FI008C",
+    "name": "Kuopio",
+    "standard_english_name": "Kuopio"
+  },
+  {
+    "eurostat_code": "FI010C",
+    "name": "Lappeenranta",
+    "standard_english_name": "Lappeenranta"
+  },
+  {
+    "eurostat_code": "NL049C",
+    "name": "Leeurostat_codeen",
+    "standard_english_name": "Leeurostat_codeen"
+  },
+  {
+    "eurostat_code": "DE008C",
+    "name": "Leipzig",
+    "standard_english_name": "Leipzig"
+  },
+  {
+    "eurostat_code": "BE008C",
+    "name": "Leuven",
+    "standard_english_name": "Leuven"
+  },
+  {
+    "eurostat_code": "BE005C",
+    "name": "Liège",
+    "standard_english_name": "Liège"
+  },
+  {
+    "eurostat_code": "FR003C",
+    "name": "Lille",
+    "standard_english_name": "Lille"
+  },
+  {
+    "eurostat_code": "IE003C",
+    "name": "Limerick",
+    "standard_english_name": "Limerick"
+  },
+  {
+    "eurostat_code": "SE007C",
+    "name": "Linköping",
+    "standard_english_name": "Linköping"
+  },
+  {
+    "eurostat_code": "PT001C",
+    "name": "Lisboa",
+    "standard_english_name": "Lisbon"
+  },
+  {
+    "eurostat_code": "SI001C",
+    "name": "Ljubljana",
+    "standard_english_name": "Ljubljana"
+  },
+  {
+    "eurostat_code": "PL002C",
+    "name": "Łódź",
+    "standard_english_name": "Łódź"
+  },
+  {
+    "eurostat_code": "UK001C",
+    "name": "London",
+    "standard_english_name": "London"
+  },
+  {
+    "eurostat_code": "SE013C",
+    "name": "Lund",
+    "standard_english_name": "Lund"
+  },
+  {
+    "eurostat_code": "LU001C",
+    "name": "Luxembourg",
+    "standard_english_name": "Luxembourg"
+  },
+  {
+    "eurostat_code": "FR002C",
+    "name": "Lyon",
+    "standard_english_name": "Lyon"
+  },
+  {
+    "eurostat_code": "NL031C",
+    "name": "Maastricht",
+    "standard_english_name": "Maastricht"
+  },
+  {
+    "eurostat_code": "ES001C",
+    "name": "Madreurostat_code",
+    "standard_english_name": "Madreurostat_code"
+  },
+  {
+    "eurostat_code": "DE035C",
+    "name": "Mainz",
+    "standard_english_name": "Mainz"
+  },
+  {
+    "eurostat_code": "ES006C",
+    "name": "Málaga",
+    "standard_english_name": "Málaga"
+  },
+  {
+    "eurostat_code": "UK008C",
+    "name": "Manchester",
+    "standard_english_name": "Manchester"
+  },
+  {
+    "eurostat_code": "DE081C",
+    "name": "Mannheim",
+    "standard_english_name": "Mannheim"
+  },
+  {
+    "eurostat_code": "SI002C",
+    "name": "Maribor",
+    "standard_english_name": "Maribor"
+  },
+  {
+    "eurostat_code": "FR004C",
+    "name": "Marseille",
+    "standard_english_name": "Marseille"
+  },
+  {
+    "eurostat_code": "IT002C",
+    "name": "Milano",
+    "standard_english_name": "Milan"
+  },
+  {
+    "eurostat_code": "FR011C",
+    "name": "Montpellier",
+    "standard_english_name": "Montpellier"
+  },
+  {
+    "eurostat_code": "DE003C",
+    "name": "München",
+    "standard_english_name": "Munich"
+  },
+  {
+    "eurostat_code": "ES007C",
+    "name": "Murcia",
+    "standard_english_name": "Murcia"
+  },
+  {
+    "eurostat_code": "FR007C",
+    "name": "Nantes",
+    "standard_english_name": "Nantes"
+  },
+  {
+    "eurostat_code": "IT003C",
+    "name": "Napoli",
+    "standard_english_name": "Naples"
+  },
+  {
+    "eurostat_code": "FR008C",
+    "name": "Nice",
+    "standard_english_name": "Nice"
+  },
+  {
+    "eurostat_code": "CY001C",
+    "name": "Lefkosia",
+    "standard_english_name": "Nicosia"
+  },
+  {
+    "eurostat_code": "NL033C",
+    "name": "Nijmegen",
+    "standard_english_name": "Nijmegen"
+  },
+  {
+    "eurostat_code": "UK028C",
+    "name": "Nottingham",
+    "standard_english_name": "Nottingham"
+  },
+  {
+    "eurostat_code": "DK003C",
+    "name": "Odense",
+    "standard_english_name": "Odense"
+  },
+  {
+    "eurostat_code": "CZ006C",
+    "name": "Olomouc",
+    "standard_english_name": "Olomouc"
+  },
+  {
+    "eurostat_code": "NO001C",
+    "name": "Oslo",
+    "standard_english_name": "Oslo"
+  },
+  {
+    "eurostat_code": "CZ003C",
+    "name": "Ostrava",
+    "standard_english_name": "Ostrava"
+  },
+  {
+    "eurostat_code": "BE024C",
+    "name": "Louvain-la-Neuve",
+    "standard_english_name": "Louvain-la-Neuve"
+  },
+  {
+    "eurostat_code": "FI004C",
+    "name": "Oulu/Uleåborg",
+    "standard_english_name": "Oulu"
+  },
+  {
+    "eurostat_code": "ES013C",
+    "name": "Oviedo",
+    "standard_english_name": "Oviedo"
+  },
+  {
+    "eurostat_code": "IT027C",
+    "name": "Padova",
+    "standard_english_name": "Padua"
+  },
+  {
+    "eurostat_code": "IT005C",
+    "name": "Palermo",
+    "standard_english_name": "Palermo"
+  },
+  {
+    "eurostat_code": "ES010C",
+    "name": "Palma de Mallorca",
+    "standard_english_name": "Palma"
+  },
+  {
+    "eurostat_code": "ES014C",
+    "name": "Pamplona/Iruña",
+    "standard_english_name": "Pamplona"
+  },
+  {
+    "eurostat_code": "FR001C",
+    "name": "Paris",
+    "standard_english_name": "Paris"
+  },
+  {
+    "eurostat_code": "IT066C",
+    "name": "Parma",
+    "standard_english_name": "Parma"
+  },
+  {
+    "eurostat_code": "IT044C",
+    "name": "Pavia",
+    "standard_english_name": "Pavia"
+  },
+  {
+    "eurostat_code": "IT016C",
+    "name": "Perugia",
+    "standard_english_name": "Perugia"
+  },
+  {
+    "eurostat_code": "IT040C",
+    "name": "Pisa",
+    "standard_english_name": "Pisa"
+  },
+  {
+    "eurostat_code": "PT002C",
+    "name": "Porto",
+    "standard_english_name": "Porto"
+  },
+  {
+    "eurostat_code": "PL005C",
+    "name": "Poznań",
+    "standard_english_name": "Poznań"
+  },
+  {
+    "eurostat_code": "CZ001C",
+    "name": "Praha",
+    "standard_english_name": "Prague"
+  },
+  {
+    "eurostat_code": "FR016C",
+    "name": "Rennes",
+    "standard_english_name": "Rennes"
+  },
+  {
+    "eurostat_code": "IS001C",
+    "name": "Reykjavík",
+    "standard_english_name": "Reykjavík"
+  },
+  {
+    "eurostat_code": "LV001C",
+    "name": "Rīga",
+    "standard_english_name": "Riga"
+  },
+  {
+    "eurostat_code": "IT001C",
+    "name": "Roma",
+    "standard_english_name": "Rome"
+  },
+  {
+    "eurostat_code": "NL037C",
+    "name": "Rotterdam",
+    "standard_english_name": "Rotterdam"
+  },
+  {
+    "eurostat_code": "ES067C",
+    "name": "Salamanca",
+    "standard_english_name": "Salamanca"
+  },
+  {
+    "eurostat_code": "AT004C",
+    "name": "Salzburg",
+    "standard_english_name": "Salzburg"
+  },
+  {
+    "eurostat_code": "ES015C",
+    "name": "Santander",
+    "standard_english_name": "Santander"
+  },
+  {
+    "eurostat_code": "ES004C",
+    "name": "Sevilla",
+    "standard_english_name": "Seville"
+  },
+  {
+    "eurostat_code": "UK010C",
+    "name": "Sheffield",
+    "standard_english_name": "Sheffield"
+  },
+  {
+    "eurostat_code": "IT089C",
+    "name": "Siena",
+    "standard_english_name": "Siena"
+  },
+  {
+    "eurostat_code": "BG001C",
+    "name": "Sofia",
+    "standard_english_name": "Sofia"
+  },
+  {
+    "eurostat_code": "HR005C",
+    "name": "Split",
+    "standard_english_name": "Split"
+  },
+  {
+    "eurostat_code": "SE001C",
+    "name": "Stockholm",
+    "standard_english_name": "Stockholm"
+  },
+  {
+    "eurostat_code": "FR009C",
+    "name": "Strasbourg",
+    "standard_english_name": "Strasbourg"
+  },
+  {
+    "eurostat_code": "DE007C",
+    "name": "Stuttgart",
+    "standard_english_name": "Stuttgart"
+  },
+  {
+    "eurostat_code": "PL007C",
+    "name": "Szczecin",
+    "standard_english_name": "Szczecin"
+  },
+  {
+    "eurostat_code": "EE001C",
+    "name": "Tallinn",
+    "standard_english_name": "Tallinn"
+  },
+  {
+    "eurostat_code": "FI002C",
+    "name": "Tampere/Tammerfors",
+    "standard_english_name": "Tampere"
+  },
+  {
+    "eurostat_code": "EE002C",
+    "name": "Tartu",
+    "standard_english_name": "Tartu"
+  },
+  {
+    "eurostat_code": "NL017C",
+    "name": "Den Haag/'s-Gravenhage",
+    "standard_english_name": "The Hague"
+  },
+  {
+    "eurostat_code": "EL002C",
+    "name": "Thessaloniki",
+    "standard_english_name": "Thessaloniki"
+  },
+  {
+    "eurostat_code": "NL041C",
+    "name": "Tilburg",
+    "standard_english_name": "Tilburg"
+  },
+  {
+    "eurostat_code": "FR006C",
+    "name": "Toulouse",
+    "standard_english_name": "Toulouse"
+  },
+  {
+    "eurostat_code": "IT014C",
+    "name": "Trento",
+    "standard_english_name": "Trento"
+  },
+  {
+    "eurostat_code": "NO003C",
+    "name": "Trondheim",
+    "standard_english_name": "Trondheim"
+  },
+  {
+    "eurostat_code": "IT004C",
+    "name": "Torino",
+    "standard_english_name": "Turin"
+  },
+  {
+    "eurostat_code": "FI003C",
+    "name": "Turku/Åbo",
+    "standard_english_name": "Turku"
+  },
+  {
+    "eurostat_code": "SE005C",
+    "name": "Umeå",
+    "standard_english_name": "Umeå"
+  },
+  {
+    "eurostat_code": "SE006C",
+    "name": "Uppsala",
+    "standard_english_name": "Uppsala"
+  },
+  {
+    "eurostat_code": "NL042C",
+    "name": "Utrecht",
+    "standard_english_name": "Utrecht"
+  },
+  {
+    "eurostat_code": "ES003C",
+    "name": "Valencia",
+    "standard_english_name": "Valencia"
+  },
+  {
+    "eurostat_code": "ES009C",
+    "name": "Valladoleurostat_code",
+    "standard_english_name": "Valladoleurostat_code"
+  },
+  {
+    "eurostat_code": "MT001C",
+    "name": "Il-Belt Valletta",
+    "standard_english_name": "Valletta"
+  },
+  {
+    "eurostat_code": "IT011C",
+    "name": "Venezia",
+    "standard_english_name": "Venice"
+  },
+  {
+    "eurostat_code": "AT001C",
+    "name": "Wien",
+    "standard_english_name": "Vienna"
+  },
+  {
+    "eurostat_code": "LT001C",
+    "name": "Vilnius",
+    "standard_english_name": "Vilnius"
+  },
+  {
+    "eurostat_code": "PL001C",
+    "name": "Warszawa",
+    "standard_english_name": "Warsaw"
+  },
+  {
+    "eurostat_code": "PL004C",
+    "name": "Wrocław",
+    "standard_english_name": "Wrocław"
+  },
+  {
+    "eurostat_code": "HR001C",
+    "name": "Zagreb",
+    "standard_english_name": "Zagreb"
+  },
+  {
+    "eurostat_code": "ES005C",
+    "name": "Zaragoza",
+    "standard_english_name": "Zaragoza"
+  }
+]

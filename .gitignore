@@ -16,3 +16,117 @@ _site/
 # counterproductive to check this file into the repository.
 # Details at https://github.com/github/pages-gem/issues/768
 Gemfile.lock
+
+
+# ===========================
+# Operating System Files
+# ===========================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ===========================
+# Environment and Configuration Files
+# ===========================
+
+# Environment variables
+.env
+
+# Instance-specific configurations
+instance/
+
+# ===========================
+# Python Bytecode and Caches
+# ===========================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ===========================
+# Logs and Temporary Files
+# ===========================
+
+# Log files
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# ===========================
+# Virtual Environments
+# ===========================
+
+# Virtual environment directories
+venv/
+env/
+.venv/
+.env/
+
+# ===========================
+# IDE and Editor Directories
+# ===========================
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains IDEs (e.g., PyCharm, IntelliJ)
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ===========================
+# Node Modules (If Applicable)
+# ===========================
+
+# Uncomment the following lines if your project uses Node.js
+# node_modules/
+# npm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
+
+# ===========================
+# Database Files
+# ===========================
+
+# SQLite databases (if applicable)
+*.sqlite3
+instance/cities.db
+
+# ===========================
+# Distribution / Build Files
+# ===========================
+
+# Build directories
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ===========================
+# Miscellaneous
+# ===========================
+
+# Ignore all JSONL files (Uncomment if you don't want to track these)
+# *.jsonl
+
+# Specific configuration files (if they contain sensitive information)
+# Uncomment and adjust if needed
+# alembic.ini
+
+# ===========================
+# End of .gitignore
+# ===========================

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>erasmoon - your perfect erasmus</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="index-page">
+    <header class="header">
+        <div class="header__container container">
+            <div class="header__logo">
+                <h1>🌙 erasmoon</h1>
+            </div>
+            <div class="header__join">
+                <button id="joinButton" class="header__join-button">Join</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="layout">
+        <!-- Banner Component -->
+        <section class="banner">
+            <div class="banner__content">
+                <h1>Plan your perfect Erasmus</h1>
+                <p>Explore the best cities for your Erasmus experience and connect with others there</p>
+            </div>
+        </section>
+
+        <!-- Search Bar Component -->
+        <div class="search-bar">
+            <button class="search-bar__toggle-button" id="toggleFilters">🎚 Filters</button>
+            <div class="search-bar__search-container">
+                <input type="text" id="searchInput" name="search" placeholder="Search for a city or country">
+            </div>
+        </div>
+
+        <!-- Results Bar Component -->
+        <div class="results-bar">
+            <div class="results-bar__count">
+                <p>
+                    <span id="visibleCitiesCount">0</span> of
+                    <span id="totalCitiesCount">{{ cities|length }}</span> cities
+                </p>
+            </div>
+            <div class="results-bar__sort-container">
+                <select name="sort" id="sortSelect">
+                    <option value="moon-score" selected>moonScore</option>
+                    <option value="popularity">Popularity</option>
+                    <option value="cost">Cost</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- City Grid Component -->
+        <section class="city-grid">
+            {% for city in cities %}
+                <a href="{{ url_for('city_detail', eurostat_code=city['eurostat_code']) }}" class="city-grid__link">
+                    <div class="city-grid__card" id="card{{ city['english_name'] }}"
+                         data-background-image="{{ url_for('static', filename='images/' + city['english_name']|lower + '_640.jpg') }}"
+                         data-eurostat-code="{{ city['eurostat_code'] }}"
+                         data-rank="{{ city['rank'] }}"
+                         data-local-name="{{ city['local_name'] }}"
+                         data-english-name="{{ city['english_name'] }}"
+                         data-local-country="{{ city['local_country'] or '' }}"
+                         data-english-country="{{ city['english_country'] or '' }}"
+                         data-population="{{ city['population'] or '' }}"
+                         data-erasmus-population="{{ city['erasmus_population'] or '' }}"
+                         data-monthly-budget="{{ city['monthly_budget'] or '' }}"
+                         data-cost-of-living-plus-rent="{{ city['cost_of_living_plus_rent'] or '' }}"
+                         data-mean-feb-min="{{ city['mean_feb_min'] if city['mean_feb_min'] is not none else '' }}"
+                         data-mean-sep-max="{{ city['mean_sep_max'] if city['mean_sep_max'] is not none else '' }}"
+                         data-mean-mar-min="{{ city['mean_mar_min'] if city['mean_mar_min'] is not none else '' }}"
+                         data-mean-jul-max="{{ city['mean_jul_max'] if city['mean_jul_max'] is not none else '' }}"
+                         data-safety-index="{{ city['safety_index'] or '' }}"
+                         data-university-count="{{ city['university_count'] or '' }}"
+                         data-public-transport-satisfaction="{{ city['public_transport_satisfaction'] or '' }}"
+                         {% for lang, percentage in city['language_percentages'].items() %}
+                         data-lang-{{ lang|lower }}="{{ percentage or '' }}"
+                         {% endfor %}
+                        >
+                        <div class="city-grid__card-content">
+                            <div class="city-grid__rank">
+                                <p><span>{{ city['rank'] or '' }}</span></p>
+                            </div>
+                            <div class="city-grid__details">
+                                <p><span class="city-grid__university-count">{{ city['university_count'] or '' }}</span> Universities</p>
+                                <p>
+                                    <span class="city-grid__erasmus-population">{{ city['erasmus_population'] or '' }}</span> Erasmus
+                                    <br>
+                                    <small>students</small>
+                                </p>
+                            </div>
+                            <div class="city-grid__center">
+                                <h2 class="city-grid__name">{{ city['english_name'] }}</h2>
+                                <h3 class="city-grid__country">{{ city['country_emoji'] or '' }} {{ city['english_country'] or '' }}</h3>
+                            </div>
+                            <div class="city-grid__temp-range-container">
+                                <div class="city-grid__temp-range temp-range"></div>
+                            </div>
+                            <div class="city-grid__budget">
+                                <p>€<span class="city-grid__monthly-budget">{{ city['monthly_budget'] or '-' }}</span>/month</p>
+                                <p>for an Erasmus</p>
+                            </div>
+                            <div class="city-grid__moon-score">
+                                <div>
+                                    <span class="city-grid__moon-score-emoji"></span>
+                                    <span class="city-grid__moon-score-value"></span>
+                                </div>
+                                <div class="city-grid__tap-for-details" style="display: none;">Tap for details</div>
+                            </div>
+                            <div class="city-grid__rating city-grid__rating--popularity">
+                                <span class="city-grid__rating-label">Popularity</span>
+                                <div class="city-grid__rating-bar">
+                                    <div class="city-grid__rating-fill"></div>
+                                </div>
+                            </div>
+                            <div class="city-grid__rating city-grid__rating--cost">
+                                <span class="city-grid__rating-label">Cost</span>
+                                <div class="city-grid__rating-bar">
+                                    <div class="city-grid__rating-fill"></div>
+                                </div>
+                            </div>
+                            <div class="city-grid__rating city-grid__rating--safety">
+                                <span class="city-grid__rating-label">Safety</span>
+                                <div class="city-grid__rating-bar">
+                                    <div class="city-grid__rating-fill"></div>
+                                </div>
+                            </div>
+                            <div class="city-grid__rating city-grid__rating--public-transport">
+                                <span class="city-grid__rating-label">Public Transport</span>
+                                <div class="city-grid__rating-bar">
+                                    <div class="city-grid__rating-fill"></div>
+                                </div>
+                            </div>
+                            <div class="city-grid__rating city-grid__rating--language">
+                                <span class="city-grid__rating-label city-grid__language-label">{{ selected_language }}</span>
+                                <div class="city-grid__rating-bar">
+                                    <div class="city-grid__rating-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__container container">
+            <p>© 2024 erasmoon</p>
+        </div>
+    </footer>
+    
+
+
+    <!-- Filter Popup Component -->
+    <div id="filterPopup" class="filter-popup popup-overlay ">
+        <div class="filter-popup__content popup-content">
+            <button id="closeFilters" class="filter-popup__close-button popup-close-button">&times;</button>
+            <div class="filter-popup__options">
+
+                <section class="filter-popup__section filter-popup__language-section">
+                    <h3>Language</h3>
+                    <div class="filter-popup__language-select-container">
+                        <label for="language-select" class="filter-popup__language-label">I want to speak: </label>
+                        <select id="languageSelect" name="language" class="filter-popup__language-select">
+                            {% for language in supported_languages %}
+                                <option value="{{ language }}" {% if language == selected_language %}selected{% endif %}>{{ language }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </section>
+
+                <section class="filter-popup__section">
+                    <h3>Size</h3>
+                    <div class="filter-popup__filter-row">
+                        <button class="filter-popup__button filter-popup__button--active" data-population="all">All</button>
+                        <button class="filter-popup__button" data-population="190000">🏘️ Town</button>
+                        <button class="filter-popup__button" data-population="340000">🏙️ Small City</button>
+                        <button class="filter-popup__button" data-population="830000">🌆 Mid City</button>
+                        <button class="filter-popup__button" data-population="metropolis">🌇 Big City</button>
+                    </div>
+                </section>
+
+                <section class="filter-popup__section">
+                    <h3>Budget</h3>
+                    <div class="filter-popup__filter-row">
+                        <button class="filter-popup__button filter-popup__button--active" data-budget="all">All</button>
+                        <button class="filter-popup__button" data-budget="700">💶 €700</button>
+                        <button class="filter-popup__button" data-budget="850">💸 €850</button>
+                        <button class="filter-popup__button" data-budget="1000">💰 €1000</button>
+                    </div>
+                </section>
+
+                <section class="filter-popup__section">
+                    <h3>Weather</h3>
+                    <div class="filter-popup__filter-row">
+                        <button class="filter-popup__button filter-popup__button--active" data-weather="all">All</button>
+                        <button class="filter-popup__button" data-weather="cold">❄️ Cold</button>
+                        <button class="filter-popup__button" data-weather="mild">🌤️ Mild</button>
+                        <button class="filter-popup__button" data-weather="warm">☀️ Warm</button>
+                    </div> 
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Button Component -->
+    <button id="feedbackButton" class="feedback-button">📣</button>
+    <!-- Feedback Popup Component -->
+    <div id="feedbackPopup" class="feedback-popup popup-overlay">
+        <div class="feedback-popup__content popup-content">
+            <button class="feedback-popup__close-button popup-close-button" id="closeFeedback" aria-label="Close feedback popup">&times;</button>
+            <h2 class="feedback-popup__title">I would appreciate your feedback!</h2>
+            <form id="feedbackForm" class="feedback-popup__form">
+                <textarea id="feedbackText" rows="4" placeholder="Your feedback here..." class="feedback-popup__textarea"></textarea>
+                <br>
+                <button type="submit" class="feedback-popup__submit-button">Submit</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add this new popup for email submission -->
+    <div id="joinPopup" class="join-popup popup-overlay">
+        <div class="join-popup__content popup-content">
+            <button class="join-popup__close-button popup-close-button" id="closeJoin" aria-label="Close join popup">&times;</button>
+            <h2 class="join-popup__title">Join erasmoon</h2>
+            <form id="joinForm" class="join-popup__form">
+                <input type="email" id="emailInput" placeholder="Your email address" class="join-popup__input" required>
+                <button type="submit" class="join-popup__submit-button">Join</button>
+                <p class="join-popup__gdpr-notice"><small>By clicking join, you agree to the processing of your email address for the purpose of joining the waitlist.
+                <br>
+                I will use this information to send you updates about the service.</small></p>
+                
+            </form>
+            <p id="joinMessage" class="join-popup__message"></p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body> 
+</html>
