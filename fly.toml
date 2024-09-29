@@ -22,3 +22,6 @@ primary_region = 'waw'
 [mounts]
   source="erasmoon_data"
   destination="/data"
+
+[processes]
+  app = "gunicorn app:app --workers=${GUNICORN_WORKERS:-2}"
