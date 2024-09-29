@@ -7,6 +7,7 @@ from data_manager import DataManager, Config
 from models import Feedback, Subscriber
 from datetime import datetime
 import re
+from helpers import sanitize_filename
 
 # Load environment variables from .env file for local development
 if os.environ.get('FLASK_ENV') != 'production':
@@ -123,6 +124,9 @@ def not_found_error(error):
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('500.html'), 500
+
+# Make this function available in templates
+app.jinja_env.filters['sanitize_filename'] = sanitize_filename
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

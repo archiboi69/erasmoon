@@ -31,7 +31,7 @@
             <div class="hero__container container">
                 <div class="hero__image-container">
                     <a href="{{ url_for('index') }}" class="hero__back-arrow">←</a>
-                    <img src="{{ url_for('static', filename='images/' + city['english_name']|lower + '_640.jpg') }}" alt="{{ city.english_name }}" class="hero__image">
+                    <img src="{{ url_for('static', filename='images/' + city['english_name']|sanitize_filename + '_640.jpg') }}" alt="{{ city.english_name }}" class="hero__image">
                 </div>
                 <div class="hero__header">
                     <h2 class="hero__name">{{ city.english_name }}</h2>

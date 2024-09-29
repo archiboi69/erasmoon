@@ -63,7 +63,7 @@
             {% for city in cities %}
                 <a href="{{ url_for('city_detail', eurostat_code=city['eurostat_code']) }}" class="city-grid__link">
                     <div class="city-grid__card" id="card{{ city['english_name'] }}"
-                         data-background-image="{{ url_for('static', filename='images/' + city['english_name']|lower + '_640.jpg') }}"
+                         data-background-image="{{ url_for('static', filename='images/' + city['english_name']|sanitize_filename + '_640.jpg') }}"
                          data-eurostat-code="{{ city['eurostat_code'] }}"
                          data-rank="{{ city['rank'] }}"
                          data-local-name="{{ city['local_name'] }}"
