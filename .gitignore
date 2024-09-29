@@ -41,7 +41,7 @@ Desktop.ini
 .env
 
 # Instance-specific configurations
-# instance/
+instance/
 
 # ===========================
 # Python Bytecode and Caches
