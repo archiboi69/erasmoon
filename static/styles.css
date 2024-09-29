@@ -180,7 +180,6 @@ section:last-of-type {
     background-color: var(--color-background-brighter);
     color: var(--color-text);
     font-size: 1em;
-    font-weight: bold;
     padding: 0 5px;
     cursor: pointer;
     border-radius: var(--border-radius-small);
@@ -193,6 +192,7 @@ section:last-of-type {
 }
 
 .search-bar__toggle-button--active {
+    font-weight: bold;
     background-color: var(--color-primary);
     border: none;
 }

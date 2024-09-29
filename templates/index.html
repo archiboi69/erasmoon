@@ -29,7 +29,9 @@
         <section class="banner">
             <div class="banner__content">
                 <h1>Plan your perfect Erasmus</h1>
-                <p>Explore the best cities for your Erasmus experience and connect with others there</p>
+                <p>Explore the best cities for your Erasmus experience and connect with others there.
+                <br><br>
+                Filter by size, budget and weather or search for your dream city.</p>
             </div>
         </section>
 
@@ -53,7 +55,7 @@
                 <select name="sort" id="sortSelect">
                     <option value="moon-score" selected>moonScore</option>
                     <option value="popularity">Popularity</option>
-                    <option value="cost">Cost</option>
+                    <option value="cost">Affordability</option>
                 </select>
             </div>
         </div>
@@ -113,7 +115,7 @@
                                     <span class="city-grid__moon-score-emoji"></span>
                                     <span class="city-grid__moon-score-value"></span>
                                 </div>
-                                <div class="city-grid__tap-for-details" style="display: none;">Tap for details</div>
+                                <div class="city-grid__tap-for-details" style="display: none;">Open details</div>
                             </div>
                             <div class="city-grid__rating city-grid__rating--popularity">
                                 <span class="city-grid__rating-label">Popularity</span>
@@ -122,7 +124,7 @@
                                 </div>
                             </div>
                             <div class="city-grid__rating city-grid__rating--cost">
-                                <span class="city-grid__rating-label">Cost</span>
+                                <span class="city-grid__rating-label">Affordability</span>
                                 <div class="city-grid__rating-bar">
                                     <div class="city-grid__rating-fill"></div>
                                 </div>
@@ -184,8 +186,8 @@
                         <button class="filter-popup__button filter-popup__button--active" data-population="all">All</button>
                         <button class="filter-popup__button" data-population="190000">🏘️ Town</button>
                         <button class="filter-popup__button" data-population="340000">🏙️ Small City</button>
-                        <button class="filter-popup__button" data-population="830000">🌆 Mid City</button>
-                        <button class="filter-popup__button" data-population="metropolis">🌇 Big City</button>
+                        <button class="filter-popup__button" data-population="830000">🌆 Big City</button>
+                        <button class="filter-popup__button" data-population="metropolis">🌇 Metropolis</button>
                     </div>
                 </section>
 
@@ -193,9 +195,9 @@
                     <h3>Budget</h3>
                     <div class="filter-popup__filter-row">
                         <button class="filter-popup__button filter-popup__button--active" data-budget="all">All</button>
-                        <button class="filter-popup__button" data-budget="700">💶 €700</button>
-                        <button class="filter-popup__button" data-budget="850">💸 €850</button>
-                        <button class="filter-popup__button" data-budget="1000">💰 €1000</button>
+                        <button class="filter-popup__button" data-budget="700">💶 €700 or less</button>
+                        <button class="filter-popup__button" data-budget="850">💸 €850 or less</button>
+                        <button class="filter-popup__button" data-budget="1000">💰 €1000 or less</button>
                     </div>
                 </section>
 
