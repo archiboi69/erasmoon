@@ -888,7 +888,7 @@ section:last-of-type {
 =================================== */
 
 .tabs {
-    margin-top: 20px;
+    margin: 20px 0;
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -948,7 +948,6 @@ section:last-of-type {
 =================================== */
 
 .overview {
-    margin-top: 30px;
     line-height: 1.6;
 }
 
@@ -1050,7 +1049,11 @@ section:last-of-type {
 /* ===================================
     Weather Section Styles
 =================================== */
-/* Temperature Range (Bottom Left) */
+
+.weather__title {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
 
 .weather__detail {
     display: flex;
@@ -1098,10 +1101,6 @@ section:last-of-type {
 /* ===================================
    Budget Section Styles
 =================================== */
-
-.budget {
-    margin-top: 30px;
-}
 
 .budget__title {
     font-size: 1.8em;
@@ -1173,10 +1172,6 @@ section:last-of-type {
    Universities Section Styles
 =================================== */
 
-.universities {
-    margin-top: 30px;
-}
-
 .universities__title {
     font-size: 1.8em;
     margin-bottom: 15px;
@@ -1196,7 +1191,7 @@ section:last-of-type {
 
 .universities__list {
     list-style-type: decimal;
-    padding-left: 20px;
+    padding-left: 30px;
 }
 
 .universities__item {
