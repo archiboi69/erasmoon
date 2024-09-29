@@ -410,54 +410,72 @@
         computeAndRenderRatings: function () {
             const selectedLanguage = this.languageSelect.value;
 
+            // Helper function to parse data and handle missing values
+            function parseData(value) {
+              const parsed = parseFloat(value);
+              return isNaN(parsed) ? null : parsed;
+            }
+
             // Calculate mean and standard deviation for each metric
             const metrics = {
                 erasmusPopulation: [],
-                costOfLiving: [],
                 safetyIndex: [],
                 publicTransportSatisfaction: []
             };
     
             this.cityCards.forEach(card => {
-                metrics.erasmusPopulation.push(parseFloat(card.dataset.erasmusPopulation) || 0);
-                metrics.costOfLiving.push(80 - parseFloat(card.dataset.costOfLivingPlusRent) || 0);
-                metrics.safetyIndex.push(parseFloat(card.dataset.safetyIndex) || 0);
-                metrics.publicTransportSatisfaction.push(parseFloat(card.dataset.publicTransportSatisfaction) || 0);
+                metrics.erasmusPopulation.push(parseData(card.dataset.erasmusPopulation));
+                metrics.safetyIndex.push(parseData(card.dataset.safetyIndex));
+                metrics.publicTransportSatisfaction.push(parseData(card.dataset.publicTransportSatisfaction));
             });
     
             const mean = {};
             const stdDev = {};
-    
+
             for (const metric in metrics) {
-                const values = metrics[metric];
+                const values = metrics[metric].filter(v => v !== null);
+                if (values.length === 0) {
+                    mean[metric] = 0;
+                    stdDev[metric] = 1; // Prevent division by zero
+                    continue;
+                }
                 mean[metric] = values.reduce((a, b) => a + b, 0) / values.length;
-                stdDev[metric] = Math.sqrt(values.map(x => Math.pow(x - mean[metric], 2)).reduce((a, b) => a + b) / values.length);
+                stdDev[metric] = Math.sqrt(values.map(x => Math.pow(x - mean[metric], 2)).reduce((a, b) => a + b) / values.length) || 1;
             }
     
             this.cityCards.forEach(card => {
                 const eurostatCode = card.dataset.eurostatCode;
-                const erasmusPopulation = parseFloat(card.dataset.erasmusPopulation) || 0;
-                const costOfLiving = 80 - parseFloat(card.dataset.costOfLivingPlusRent) || 0;
-                const safetyIndex = parseFloat(card.dataset.safetyIndex) || 0;
-                const publicTransportSatisfaction = parseFloat(card.dataset.publicTransportSatisfaction) || 0;
+                const erasmusPopulation = parseData(card.dataset.erasmusPopulation);
+                const safetyIndex = parseData(card.dataset.safetyIndex);
+                const publicTransportSatisfaction = parseData(card.dataset.publicTransportSatisfaction);
                 const languagePercentage = parseFloat(card.dataset[`lang-${selectedLanguage.toLowerCase()}`]) || 0;
     
                 const languageLabel = card.querySelector('.city-grid__language-label');
     
     
-                // Calculate z-scores
-                const zScores = {
-                    popularity: (erasmusPopulation - mean.erasmusPopulation) / stdDev.erasmusPopulation,
-                    cost: (costOfLiving - mean.costOfLiving) / stdDev.costOfLiving,
-                    safety: (safetyIndex - mean.safetyIndex) / stdDev.safetyIndex,
-                    publicTransport: (publicTransportSatisfaction - mean.publicTransportSatisfaction) / stdDev.publicTransportSatisfaction,
-                };
+                // Calculate z-scores only if data is available
+                const zScores = {};
+                if (erasmusPopulation !== null) {
+                    zScores.popularity = (erasmusPopulation - mean.erasmusPopulation) / stdDev.erasmusPopulation;
+                } else {
+                    zScores.popularity = 0;
+                }
+                if (safetyIndex !== null) {
+                    zScores.safety = (safetyIndex - mean.safetyIndex) / stdDev.safetyIndex;
+                } else {
+                    zScores.safety = 0;
+                }
+                if (publicTransportSatisfaction !== null) {
+                    zScores.publicTransport = (publicTransportSatisfaction - mean.publicTransportSatisfaction) / stdDev.publicTransportSatisfaction;
+                } else {
+                    zScores.publicTransport = 0;
+                }
     
                 // Normalize z-scores to a 0-5 scale
                 const normalize = z => Math.min(Math.max((z + 3) / 6 * 5, 0), 5); // Assuming z-scores are within -3 to +3
     
                 const popularityScore = normalize(zScores.popularity);
-                const costScore = ((100 - parseFloat(card.dataset.costOfLivingPlusRent)) / 75) * 5 || 0;
+                const costScore = ((100 - parseFloat(card.dataset.costOfLivingPlusRent)) / 75) * 5 || 0; // Cost of living has separate scale
                 const safetyScore = normalize(zScores.safety);
                 const publicTransportScore = normalize(zScores.publicTransport);
                 const languageScore = languagePercentage / 20; // Assuming language percentage is already a percentage
