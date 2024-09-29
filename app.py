@@ -4,7 +4,7 @@ if os.path.exists('.env'):
     load_dotenv()
 
 import logging
-from logging.handlers import RotatingFileHandler
+import sys
 from flask import Flask, render_template, request, jsonify
 from data_manager import DataManager, Config
 from models import Feedback, Subscriber
@@ -12,17 +12,12 @@ from datetime import datetime
 import re
 
 # Configure logging
-log_dir = os.environ.get('LOG_DIR', 'logs')
-os.makedirs(log_dir, exist_ok=True)
-log_file = os.path.join(log_dir, 'app.log')
-
-handler = RotatingFileHandler(log_file, maxBytes=10000000, backupCount=5)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
 
 app = Flask(__name__)
 
@@ -32,8 +27,7 @@ config = Config(
     SUPPORTED_CITIES_FILE=os.environ.get('SUPPORTED_CITIES_FILE', 'config/supported_cities.json'),
     SUPPORTED_LANGUAGES_FILE=os.environ.get('SUPPORTED_LANGUAGES_FILE', 'config/supported_languages.json'),
     LANGUAGE_SKILLS_FILE=os.environ.get('LANGUAGE_SKILLS_FILE', 'europeans_and_their_languages_2024_summed.csv'),
-    
-)  
+)
 data_manager = DataManager(config)
 
 @app.route('/')
@@ -112,5 +106,5 @@ def join_waitlist():
             return jsonify({'success': False, 'message': 'Error adding to waitlist'}), 500
 
 if __name__ == '__main__':
-    debug_mode = os.environ.get('DEBUG_MODE', 'False').lower() == 'true'
-    app.run(debug=debug_mode, host='0.0.0.0', port=3000)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
