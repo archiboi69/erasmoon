@@ -663,7 +663,8 @@ class DataProcessor:
                     'size_class': size_class,
                     'url': getattr(uni, 'url', None),
                     'lat': getattr(uni, 'lat', None),
-                    'lon': getattr(uni, 'lon', None)
+                    'lon': getattr(uni, 'lon', None),
+                    'total_students': getattr(uni, 'total_students', None),
                 })
             except Exception as e:
                 logging.error(f"Error processing university {uni.name}: {e}")

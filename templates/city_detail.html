@@ -212,6 +212,7 @@
                                 <p class="universities__details">{{ city.country_emoji }} {{ uni.name }}</p>
                                 <p class="universities__code">Erasmus Code: {{ uni.erasmus_code }}</p>
                                 <p class="universities__category">Category: {{ uni.category }}</p>
+                                <p class='universities__total-students'>Students: {{ '{:,}'.format(uni.total_students) if uni.total_students else 'N/A' }}</p>
                                 {% if uni.url %}
                                     <a class="universities__link" href="{{ uni.url }}" target="_blank">Visit Website</a>
                                 {% endif %}

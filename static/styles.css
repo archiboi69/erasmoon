@@ -761,7 +761,7 @@ section:last-of-type {
 .join-popup__input {
     width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     border: 1px solid var(--color-text-faint);
     border-radius: var(--border-radius-small);
     background-color: var(--color-background-secondary);
