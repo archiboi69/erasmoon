@@ -7,7 +7,7 @@ if os.environ.get('FLASK_ENV') != 'production':
 
 import logging
 import sys
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_caching import Cache
 from data_manager import DataManager, Config
 from models import Feedback, Subscriber
@@ -37,6 +37,15 @@ data_manager = DataManager(config)
 #def get_cities_overview():
 #    return data_manager.get_cities_overview()
 
+@app.before_request
+def redirect_www():
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'https':
+        if request.host.startswith('www.'):
+            return redirect(
+                'https://' + request.host[4:] + request.path,
+                code=301
+            )
+           
 @app.route('/')
 def index():
     """

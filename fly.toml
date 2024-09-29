@@ -16,6 +16,9 @@ primary_region = 'waw'
   min_machines_running = 0
   processes = ['app']
 
+[[http_service.domains]]
+  names = ["erasmoon.com", "www.erasmoon.com"]
+
 [[vm]]
   size = 'shared-cpu-1x'
 
