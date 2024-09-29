@@ -33,9 +33,9 @@ config = Config(
 )
 data_manager = DataManager(config)
 
-@cache.cached(timeout=300)
-def get_cities_overview():
-    return data_manager.get_cities_overview()
+#@cache.cached(timeout=300)
+#def get_cities_overview():
+#    return data_manager.get_cities_overview()
 
 @app.route('/')
 def index():
@@ -43,7 +43,7 @@ def index():
     Renders the landing page with a grid of cities.
     """
     
-    cities_overview = get_cities_overview()
+    cities_overview = data_manager.get_cities_overview()
     selected_language = request.args.get('language', 'English')
     supported_languages = data_manager.supported_languages
 
