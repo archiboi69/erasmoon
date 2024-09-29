@@ -23,7 +23,7 @@ class Config:
     SUPPORTED_CITIES_FILE: str
     LANGUAGE_SKILLS_FILE: str
     SUPPORTED_LANGUAGES_FILE: str
-    
+    DATABASE_URL: str
     
 
 class DataLoader:
