@@ -419,13 +419,11 @@
             // Calculate mean and standard deviation for each metric
             const metrics = {
                 erasmusPopulation: [],
-                safetyIndex: [],
                 publicTransportSatisfaction: []
             };
     
             this.cityCards.forEach(card => {
                 metrics.erasmusPopulation.push(parseData(card.dataset.erasmusPopulation));
-                metrics.safetyIndex.push(parseData(card.dataset.safetyIndex));
                 metrics.publicTransportSatisfaction.push(parseData(card.dataset.publicTransportSatisfaction));
             });
     
@@ -446,10 +444,9 @@
             this.cityCards.forEach(card => {
                 const eurostatCode = card.dataset.eurostatCode;
                 const erasmusPopulation = parseData(card.dataset.erasmusPopulation);
-                const safetyIndex = parseData(card.dataset.safetyIndex);
                 const publicTransportSatisfaction = parseData(card.dataset.publicTransportSatisfaction);
                 const languagePercentage = parseFloat(card.dataset[`lang-${selectedLanguage.toLowerCase()}`]) || 0;
-    
+                const safetyIndex = parseFloat(card.dataset.safetyIndex) || 60;
                 const languageLabel = card.querySelector('.city-grid__language-label');
     
     
@@ -459,11 +456,6 @@
                     zScores.popularity = (erasmusPopulation - mean.erasmusPopulation) / stdDev.erasmusPopulation;
                 } else {
                     zScores.popularity = 0;
-                }
-                if (safetyIndex !== null) {
-                    zScores.safety = (safetyIndex - mean.safetyIndex) / stdDev.safetyIndex;
-                } else {
-                    zScores.safety = 0;
                 }
                 if (publicTransportSatisfaction !== null) {
                     zScores.publicTransport = (publicTransportSatisfaction - mean.publicTransportSatisfaction) / stdDev.publicTransportSatisfaction;
@@ -476,7 +468,7 @@
     
                 const popularityScore = normalize(zScores.popularity);
                 const costScore = ((100 - parseFloat(card.dataset.costOfLivingPlusRent)) / 75) * 5 || 0; // Cost of living has separate scale
-                const safetyScore = normalize(zScores.safety);
+                const safetyScore = (safetyIndex / 80) * 5; // Safety index has separate scale
                 const publicTransportScore = normalize(zScores.publicTransport);
                 const languageScore = languagePercentage / 20; // Assuming language percentage is already a percentage
     
