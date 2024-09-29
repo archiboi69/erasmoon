@@ -18,3 +18,7 @@ primary_region = 'waw'
 
 [[vm]]
   size = 'shared-cpu-1x'
+
+[mounts]
+  source="erasmoon_data"
+  destination="/data"
