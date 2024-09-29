@@ -24,4 +24,4 @@ primary_region = 'waw'
   destination="/data"
 
 [processes]
-  app = "gunicorn app:app --workers=${GUNICORN_WORKERS:-2}"
+  app = "web: gunicorn app:app --workers=2 --threads=2"
