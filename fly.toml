@@ -21,6 +21,7 @@ primary_region = 'waw'
 
 [[vm]]
   size = 'shared-cpu-1x'
+  memory = 512
 
 [mounts]
   source="erasmoon_data"
