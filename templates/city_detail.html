@@ -239,12 +239,29 @@
     <div id="feedbackPopup" class="feedback-popup popup-overlay">
         <div class="feedback-popup__content popup-content">
             <button class="feedback-popup__close-button popup-close-button" id="closeFeedback" aria-label="Close feedback popup">&times;</button>
-            <h2 class="feedback-popup__title">I would appreciate your feedback!</h2>
+            <h2 class="feedback-popup__title">I would really appreciate your feedback! - Michał, the creator of erasmoon</h2>
             <form id="feedbackForm" class="feedback-popup__form">
                 <textarea id="feedbackText" rows="4" placeholder="Your feedback here..." class="feedback-popup__textarea"></textarea>
                 <br>
                 <button type="submit" class="feedback-popup__submit-button">Submit</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Add this new popup for email submission -->
+    <div id="joinPopup" class="join-popup popup-overlay">
+        <div class="join-popup__content popup-content">
+            <button class="join-popup__close-button popup-close-button" id="closeJoin" aria-label="Close join popup">&times;</button>
+            <h2 class="join-popup__title">Join erasmoon 🚀</h2>
+            <form id="joinForm" class="join-popup__form">
+                <input type="email" id="emailInput" placeholder="Your email address" class="join-popup__input" required>
+                <button type="submit" class="join-popup__submit-button">Join</button>
+                <p class="join-popup__gdpr-notice"><small>I will use your email address to tell you when the service is ready. I will not share your email address with anyone else.
+                <br><br>
+                By clicking join, you agree to the processing of your email address for this purpose.</small></p>
+                
+            </form>
+            <p id="joinMessage" class="join-popup__message"></p>
         </div>
     </div>
 
