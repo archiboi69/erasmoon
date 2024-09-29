@@ -6,6 +6,7 @@ if os.path.exists('.env'):
 import logging
 import sys
 from flask import Flask, render_template, request, jsonify
+from flask_caching import Cache
 from data_manager import DataManager, Config
 from models import Feedback, Subscriber
 from datetime import datetime
@@ -20,6 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 config = Config(
     DATA_DIR=os.environ.get('DATA_DIR', 'data'),
@@ -30,13 +32,17 @@ config = Config(
 )
 data_manager = DataManager(config)
 
+@cache.cached(timeout=300)
+def get_cities_overview():
+    return data_manager.get_cities_overview()
+
 @app.route('/')
 def index():
     """
     Renders the landing page with a grid of cities.
     """
     
-    cities_overview = data_manager.get_cities_overview()
+    cities_overview = get_cities_overview()
     selected_language = request.args.get('language', 'English')
     supported_languages = data_manager.supported_languages
 
@@ -105,6 +111,15 @@ def join_waitlist():
             logger.error(f"Error adding subscriber: {str(e)}")
             return jsonify({'success': False, 'message': 'Error adding to waitlist'}), 500
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html'), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+    debug = os.environ.get('FLASK_DEBUG', True)
+    app.run(debug=debug, host='0.0.0.0', port=port)
