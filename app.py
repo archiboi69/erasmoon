@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
-if os.path.exists('.env'):
+
+# Load environment variables from .env file for local development
+if os.environ.get('FLASK_ENV') != 'production':
     load_dotenv()
 
 import logging
