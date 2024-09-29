@@ -1,18 +1,16 @@
 import os
 from dotenv import load_dotenv
-
-# Load environment variables from .env file for local development
-if os.environ.get('FLASK_ENV') != 'production':
-    load_dotenv()
-
 import logging
 import sys
 from flask import Flask, render_template, request, redirect, jsonify
-from flask_caching import Cache
 from data_manager import DataManager, Config
 from models import Feedback, Subscriber
 from datetime import datetime
 import re
+
+# Load environment variables from .env file for local development
+if os.environ.get('FLASK_ENV') != 'production':
+    load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -23,7 +21,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 config = Config(
     DATA_DIR=os.environ.get('DATA_DIR', 'data'),
@@ -34,9 +31,6 @@ config = Config(
 )
 data_manager = DataManager(config)
 
-#@cache.cached(timeout=300)
-#def get_cities_overview():
-#    return data_manager.get_cities_overview()
 
 @app.before_request
 def redirect_www():
