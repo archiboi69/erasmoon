@@ -27,7 +27,6 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 config = Config(
     DATA_DIR=os.environ.get('DATA_DIR', 'data'),
-    LOG_DIR=os.environ.get('LOG_DIR', 'logs'),
     SUPPORTED_CITIES_FILE=os.environ.get('SUPPORTED_CITIES_FILE', 'config/supported_cities.json'),
     SUPPORTED_LANGUAGES_FILE=os.environ.get('SUPPORTED_LANGUAGES_FILE', 'config/supported_languages.json'),
     LANGUAGE_SKILLS_FILE=os.environ.get('LANGUAGE_SKILLS_FILE', 'europeans_and_their_languages_2024_summed.csv'),

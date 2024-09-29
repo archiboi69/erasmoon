@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Config:
-    LOG_DIR: str
     DATA_DIR: str
     SUPPORTED_CITIES_FILE: str
     LANGUAGE_SKILLS_FILE: str
