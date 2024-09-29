@@ -372,7 +372,9 @@ class DatabaseManager:
             session.commit()
         except Exception as e:
             session.rollback()
-            logging.error(f"Session rollback due to exception: {e}")
+            logger.error(f"Database connection error: {str(e)}")
+            logger.error(f"Current working directory: {os.getcwd()}")
+            logger.error(f"Files in /data: {os.listdir('/data')}")
             raise
         finally:
             session.close()
