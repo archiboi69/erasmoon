@@ -6,7 +6,7 @@ import pandas as pd
 import logging
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc
-from models import City, Metrics
+from models import City, Metrics, Language
 from database import SessionLocal
 from contextlib import contextmanager
 from typing import Dict, Any, List, Optional
@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 class Config:
     DATA_DIR: str
     SUPPORTED_CITIES_FILE: str
-    LANGUAGE_SKILLS_FILE: str
     SUPPORTED_LANGUAGES_FILE: str
     DATABASE_URL: str
     
@@ -31,18 +30,16 @@ class DataLoader:
     Handles loading of data from various sources such as CSV and JSON files.
     """
 
-    def __init__(self, data_dir: str, language_skills_file: str, supported_languages_file: str, supported_cities_file: str):
+    def __init__(self, data_dir: str, supported_languages_file: str, supported_cities_file: str):
         """
         Initializes the DataLoader with specified directories and file names.
 
         Args:
             data_dir (str): Directory where data files are located.
-            LANGUAGE_SKILLS_FILE (str): CSV file containing language data.
             country_emojis_file (str): JSON file containing country emojis.
             supported_cities_file (str): JSON file containing supported cities.
         """
         self.data_dir = data_dir
-        self.language_skills_file = language_skills_file
         self.supported_languages_file = supported_languages_file
         self.eurostat_data_dir = os.path.join(data_dir, 'eurostat')
         self.supported_cities_file = supported_cities_file
@@ -82,33 +79,6 @@ class DataLoader:
         except json.JSONDecodeError as e:
             logging.error(f"Error decoding JSON from {self.supported_cities_file}: {e}")
             return []
-
-    def load_language_skills_data(self) -> Dict[str, Dict[str, float]]:
-        """
-        Loads language data from a CSV file into a nested dictionary.
-
-        Returns:
-            Dict[str, Dict[str, float]]: Nested dictionary with country as the outer key
-                                         and language as the inner key.
-        """
-        try:
-            file_path = os.path.join(self.data_dir, self.language_skills_file)
-            logging.info(f"Loading language data from {file_path}")
-            
-            df = pd.read_csv(file_path, index_col='Language')
-            language_data = df.astype(float).to_dict()
-
-            logging.info(f"Language data loaded successfully. {len(language_data)} countries processed.")
-            return language_data
-        except FileNotFoundError:
-            logging.error(f"Language file not found: {self.language_skills_file}")
-            return {}
-        except pd.errors.ParserError as e:
-            logging.error(f"Error parsing CSV file {self.language_skills_file}: {e}")
-            return {}
-        except Exception as e:
-            logging.error(f"Unexpected error loading language data: {e}")
-            return {}
 
     def import_eurostat_urb_percep(self, topic: str = None) -> pd.DataFrame:
         """
@@ -245,15 +215,12 @@ class DataManager:
         self.database_manager = DatabaseManager(session_factory=SessionLocal)
         self.data_loader = DataLoader(
             data_dir=config.DATA_DIR,
-            language_skills_file=config.LANGUAGE_SKILLS_FILE,
             supported_languages_file=config.SUPPORTED_LANGUAGES_FILE,
             supported_cities_file=config.SUPPORTED_CITIES_FILE
         )
-        self.language_data = self.data_loader.load_language_skills_data()
         self.supported_languages = self.data_loader.load_supported_languages()
         
         self.data_processor = DataProcessor(
-            language_data=self.language_data,
             database_manager=self.database_manager,
             supported_languages=self.supported_languages
         )
@@ -486,23 +453,39 @@ class DatabaseManager:
         # If any persistent connections or resources are held, close them here
         logging.info("DatabaseManager has been closed.")
 
+    def fetch_language_data(self) -> Dict[str, Dict[str, float]]:
+        """
+        Fetches language data from the Language table.
+
+        Returns:
+            Dict[str, Dict[str, float]]: Nested dictionary with country as the outer key
+                                         and language as the inner key.
+        """
+        language_data = {}
+        with self.get_session() as session:
+            languages = session.query(Language).all()
+            for lang in languages:
+                if lang.country not in language_data:
+                    language_data[lang.country] = {}
+                language_data[lang.country][lang.language] = lang.percentage 
+        return language_data
 
 class DataProcessor:
     """
     Processes and enriches data using loaded datasets.
     """
 
-    def __init__(self, language_data: Dict[str, Any], database_manager: 'DatabaseManager', supported_languages: List[str]):
+    def __init__(self, database_manager: 'DatabaseManager', supported_languages: List[str]):
         """
-        Initializes the DataProcessor with language data and a DatabaseManager instance.
+        Initializes the DataProcessor with a DatabaseManager instance and supported languages.
 
         Args:
-            language_data (Dict[str, Any]): Nested dictionary with language proficiency data.
-            database_manager (DatabaseManager): Instance to interact with the database for emojis.
+            database_manager (DatabaseManager): Instance to interact with the database.
+            supported_languages (List[str]): List of supported languages.
         """
-        self.language_data = language_data
         self.database_manager = database_manager
         self.supported_languages = supported_languages
+        self.language_data = self.database_manager.fetch_language_data()
 
     def enrich_overview(self, city: Any) -> Dict[str, Any]:
         """
