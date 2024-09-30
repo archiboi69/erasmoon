@@ -33,7 +33,7 @@ config = Config(
     SUPPORTED_LANGUAGES_FILE=os.environ.get('SUPPORTED_LANGUAGES_FILE', 'config/supported_languages.json'),
     DATABASE_URL=os.environ.get('DATABASE_URL', 'sqlite:///instance/cities.db')
 )
-#data_manager = DataManager(config)
+data_manager = DataManager(config)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
@@ -68,12 +68,9 @@ def login_required(f):
            
 @app.route('/')
 def index():
-    def hello():
-        return "Hello, World!"
-    """
-    
+    """ 
     Renders the landing page with a grid of cities.
-    
+    """
     
     cities_overview = data_manager.get_cities_overview()
     selected_language = request.args.get('language', 'English')
@@ -85,7 +82,7 @@ def index():
     return render_template('index.html', 
                            cities=cities_overview, 
                            supported_languages=supported_languages, 
-                           selected_language=selected_language)"""
+                           selected_language=selected_language)
 
 @app.route('/city/<eurostat_code>')
 @login_required
