@@ -59,8 +59,11 @@ def redirect_www():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print("Checking if user is logged in...")  # Add this line
         if 'subscriber_id' not in session:
-            return redirect(url_for('login', next=request.url))
+            print("User is not logged in, returning 401")  # Add this line
+            return jsonify({'redirect': 'auth_popup'}), 401
+        print("User is logged in, proceeding to view")  # Add this line
         return f(*args, **kwargs)
     return decorated_function
            
@@ -143,7 +146,11 @@ def join_waitlist():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        if request.is_json:
+            email = request.json.get('email')
+        else:
+            email = request.form.get('email')
+
         if not email:
             return jsonify({'success': False, 'message': 'Email is required'}), 400
 
@@ -166,8 +173,13 @@ def login():
         login_link = url_for('verify_login', token=token, _external=True)
         send_login_email(email, login_link)
 
-        return jsonify({'success': True, 'message': 'Login link sent to your email'}), 200
+        # Check if the request wants a JSON response
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Login link sent to your email'}), 200
+        else:
+            return redirect(url_for('index'))
 
+    # If it's a GET request or doesn't want JSON, render the login template
     return render_template('login.html')
 
 @app.route('/verify-login/<token>')

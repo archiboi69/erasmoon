@@ -135,15 +135,29 @@ section:last-of-type {
     color: var(--color-text);
 }
 
-.header__join-button {
+.header__action-button {
     background-color: transparent;
     color: var(--color-text);
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
-    border: 1px solid var(--color-text);
-    padding: 5px 20px;
+    border: 2px solid var(--color-text);
+    padding: 8px 16px;
     border-radius: var(--border-radius-small);
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header__action-button:hover {
+    background-color: var(--color-text);
+    color: var(--color-primary);
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .header__action-button {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -745,20 +759,20 @@ section:last-of-type {
 }
 
 /* ===================================
-   Join Popup Specific Styles
+   Auth Popup Specific Styles
 =================================== */
 
-.join-popup__content {
+.auth-popup__content {
     max-width: 400px;
 }
 
-.join-popup__title {
+.auth-popup__title {
     font-size: 24px;
     margin-bottom: 20px;
     color: var(--color-text);
 }
 
-.join-popup__input {
+.auth-popup__input {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -768,13 +782,13 @@ section:last-of-type {
     color: var(--color-text);
 }
 
-.join-popup__gdpr-notice {
+.auth-popup__gdpr-notice {
     margin-top: 15px;
     font-size: 0.9em;
     color: var(--color-text-faint);
 }
 
-.join-popup__submit-button {
+.auth-popup__submit-button {
     background-color: var(--color-primary);
     color: var(--color-text);
     padding: 10px 20px;
@@ -783,11 +797,11 @@ section:last-of-type {
     cursor: pointer;
 }
 
-.join-popup__submit-button:hover {
+.auth-popup__submit-button:hover {
     background-color: var(--color-secondary);
 }
 
-.join-popup__message {
+.auth-popup__message {
     margin-top: 10px;
     font-weight: bold;
 }
@@ -1247,3 +1261,5 @@ section:last-of-type {
     font-size: 16px;
     color: black;
 }
+
+
