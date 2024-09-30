@@ -13,7 +13,7 @@ from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 import re
 from sqlalchemy import func
-
+from datetime import date
 
 logger = logging.getLogger(__name__)
 
@@ -361,7 +361,7 @@ class DatabaseManager:
             session.rollback()
             logger.error(f"Database connection error: {str(e)}")
             logger.error(f"Current working directory: {os.getcwd()}")
-            logger.error(f"Files in /data: {os.listdir('/data')}")
+            logger.error(f"Files in current directory: {os.listdir('.')}")
             raise
         finally:
             session.close()
@@ -463,12 +463,12 @@ class DatabaseManager:
                     for column, value in row.items():
                         if column != 'eurostat_code' and hasattr(existing_record, column):
                             setattr(existing_record, column, value)
-                    existing_record.last_updated = func.now()  # Update the last_updated timestamp
+                    existing_record.last_updated = date.today()  # Update the last_updated timestamp
                 else:
                     # Create new record with only the data present in the DataFrame
                     new_record_data = {column: value for column, value in row.items() if column != 'eurostat_code'}
                     new_record_data['eurostat_code'] = eurostat_code
-                    new_record_data['last_updated'] = func.now()
+                    new_record_data['last_updated'] = date.today()
                     new_record = Metrics(**new_record_data)
                     session.add(new_record)
             
