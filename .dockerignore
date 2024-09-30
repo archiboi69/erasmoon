@@ -113,6 +113,12 @@ vendor
 # Miscellaneous
 # ===========================
 
+# Exclude all subfolders of data
+data/*/
+
+# But include the data folder itself
+!data/
+
 # Ignore all JSONL files (Uncomment if you don't want to track these)
 # *.jsonl
 

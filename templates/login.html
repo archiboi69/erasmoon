@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Login - erasmoon{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+<form id="login-form">
+    <input type="email" name="email" required placeholder="Enter your email">
+    <button type="submit">Send Login Link</button>
+</form>
+<div id="message"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = this.email.value;
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'email=' + encodeURIComponent(email)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('message').textContent = data.message;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('message').textContent = 'An error occurred. Please try again.';
+    });
+});
+</script>
+{% endblock %}

@@ -2,6 +2,7 @@
 (function () {
     // Wait for the DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM fully loaded and parsed');
       // Determine which page we're on
       const isIndexPage = document.body.classList.contains('index-page');
       const isCityDetailPage = document.body.classList.contains('city-detail-page');
@@ -11,6 +12,15 @@
       const feedbackPopup = document.getElementById('feedbackPopup');
       const feedbackForm = document.getElementById('feedbackForm');
       const popupCloseButton = document.getElementById('closeFeedback');
+
+      // Initialize auth-related variables
+      const authButton = document.getElementById('authButton');
+      const authPopup = document.getElementById('authPopup');
+      const closeAuth = document.getElementById('closeAuth');
+      const authForm = document.getElementById('authForm');
+      const authTitle = document.getElementById('authTitle');
+      const authSubmitButton = document.getElementById('authSubmitButton');
+      const authMessage = document.getElementById('authMessage');
 
       // Initialize page-specific variables
       let cityCards = [];
@@ -47,14 +57,16 @@
 
         // Common functions
         init: function () {
-          this.setupFeedbackPopup();
-          this.setupJoinWaitlist();
+            console.log('Initializing app...');
+            this.setupFeedbackPopup();
+            this.setupAuthPopup();
+            this.setupAuthRedirect();
   
-          if (isIndexPage) {
-            this.initIndexPage();
-          } else if (isCityDetailPage) {
-            this.initCityDetailPage();
-          }
+            if (isIndexPage) {
+                this.initIndexPage();
+            } else if (isCityDetailPage) {
+                this.initCityDetailPage();
+            }
         },
   
         /** ---------------- Common Functions ---------------- **/
@@ -109,71 +121,132 @@
         },
 
         /**
-         * Sets up the join waitlist functionality.
+         * Sets up the auth popup functionality.
          */
-        setupJoinWaitlist: function () {
-          const joinButton = document.getElementById('joinButton');
-          const joinPopup = document.getElementById('joinPopup');
-          const closeJoin = document.getElementById('closeJoin');
-          const joinForm = document.getElementById('joinForm');
-          const joinMessage = document.getElementById('joinMessage');
+        setupAuthPopup: function () {
+            if (authButton && authPopup) {
+                authButton.addEventListener('click', () => {
+                    if (authButton.textContent.trim() === 'Logout') {
+                        // Handle logout
+                        fetch('/logout')
+                            .then(response => {
+                                if (response.ok) {
+                                    location.reload();
+                                } else {
+                                    console.error('Logout failed');
+                                }
+                            });
+                    } else {
+                        authPopup.style.display = 'flex';
+                    }
+                });
+            }
+            
+            if (closeAuth) {
+                closeAuth.addEventListener('click', () => {
+                    authPopup.style.display = 'none';
+                });
+            }
 
-          if (joinButton && joinPopup) {
-            joinButton.addEventListener('click', () => {
-              joinPopup.style.display = 'block';
-            });
+            if (authForm) {
+                authForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('emailInput').value;
+                    
+                    try {
+                        const response = await fetch('/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ email: email }),
+                        });
 
-            joinPopup.addEventListener('click', (event) => {
-              if (event.target === joinPopup) {
-                joinPopup.style.display = 'none';
-              }
-            });
-          }
+                        const data = await response.json();
 
-          if (closeJoin) {
-            closeJoin.addEventListener('click', () => {
-              joinPopup.style.display = 'none';
+                        if (response.ok) {
+                            authMessage.textContent = data.message;
+                            authMessage.style.color = 'green';
+                            // Close the popup after successful login
+                            setTimeout(() => {
+                                document.getElementById('authPopup').style.display = 'none';
+                                // Reload the current page
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            authMessage.textContent = data.message || 'An error occurred';
+                            authMessage.style.color = 'red';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        authMessage.textContent = 'An error occurred. Please try again.';
+                        authMessage.style.color = 'red';
+                    }
+                });
+            }
+        },
+  
+        /**
+         * Sets up the auth redirect functionality.
+         */
+        setupAuthRedirect: function () {
+            console.log('Setting up auth redirect');
+            const cityLinks = document.querySelectorAll('.city-grid__link');
+            cityLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation(); // Stop the event from bubbling up
+                    console.log('City link clicked:', this.href);
+                    
+                    // Check if we're already processing a click for this link
+                    if (this.dataset.processing) {
+                        return;
+                    }
+                    
+                    // Set a flag to indicate we're processing this link
+                    this.dataset.processing = 'true';
+                    
+                    const href = this.getAttribute('href');
+                    fetch(href, {
+                        method: 'GET',
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        if (response.status === 401) {
+                            console.log('Unauthorized response received');
+                            return response.json();
+                        }
+                        if (!response.ok) {
+                            console.log('Response not OK');
+                            throw new Error('Network response was not ok');
+                        }
+                        console.log('Response OK, getting text');
+                        return response.text().then(html => ({isHtml: true, content: html}));
+                    })
+                    .then(data => {
+                        if (data.isHtml) {
+                            console.log('Received HTML, length:', data.content.length);
+                            document.open();
+                            document.write(data.content);
+                            document.close();
+                            window.history.pushState({}, '', href);
+                        } else if (data.redirect === 'auth_popup') {
+                            console.log('Showing auth popup');
+                            document.getElementById('authPopup').style.display = 'flex';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        window.location.href = href;
+                    })
+                    .finally(() => {
+                        // Remove the processing flag when we're done
+                        delete this.dataset.processing;
+                    });
+                });
             });
-          }
-
-          if (joinForm) {
-            joinForm.addEventListener('submit', function (e) {
-              e.preventDefault();
-              const email = document.getElementById('emailInput').value.trim();
-              
-              // Basic email validation
-              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-              if (!emailRegex.test(email)) {
-                joinMessage.textContent = "Please enter a valid email address.";
-                joinMessage.style.color = 'red';
-                return;
-              }
-              
-              fetch('/join_waitlist', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({email: email}),
-              })
-              .then(response => response.json())
-              .then(data => {
-                if (data.success) {
-                  joinMessage.textContent = "You've been added to the waitlist!";
-                  joinMessage.style.color = 'var(--color-accent)';
-                  joinForm.reset();
-                } else {
-                  joinMessage.textContent = "There was an error. Please try again.";
-                  joinMessage.style.color = 'red';
-                }
-              })
-              .catch((error) => {
-                console.error('Error:', error);
-                joinMessage.textContent = "There was an error. Please try again.";
-                joinMessage.style.color = 'red';
-              });
-            });
-          }
         },
   
         /** ---------------- Index Page Functions ---------------- **/
@@ -213,6 +286,9 @@
           this.resetCardStates();
           this.computeAndRenderRatings();
           this.filterCities();
+
+          // Set up auth redirect for city cards
+          this.setupAuthRedirect();
         },
   
         /**
