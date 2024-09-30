@@ -225,6 +225,6 @@ def internal_error(error):
 app.jinja_env.filters['sanitize_filename'] = sanitize_filename
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080))
+    port = int(os.environ.get('PORT', 8081))
     debug = os.environ.get('FLASK_DEBUG', False)
     app.run(debug=debug, host='0.0.0.0', port=port)

@@ -72,8 +72,6 @@ class CostOfLiving(Base):
     
     eurostat_code = Column(String(50), ForeignKey('cities.eurostat_code'), primary_key=True)
     monthly_budget = Column(Float, nullable=True)
-    groceries_budget = Column(Float, nullable=True)
-    transport_budget = Column(Float, nullable=True)
     cost_of_living_index = Column(Float, nullable=True)
     rent_index = Column(Float, nullable=True)
     cost_of_living_plus_rent_index = Column(Float, nullable=True)
