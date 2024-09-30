@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, BigInteger, Numeric, Index, Text, DateTime
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, BigInteger, Numeric, Index, Text, DateTime, Boolean
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
+import uuid
 
 
 Base = declarative_base()
@@ -18,7 +19,7 @@ class City(Base):
     erasmus_population = Column(Integer, nullable=True)
     lat = Column(Numeric(9, 6), nullable=True)
     lon = Column(Numeric(9, 6), nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
     
     climate = relationship("Climate", back_populates="city", uselist=False, cascade="all, delete-orphan")
     cost_of_living = relationship("CostOfLiving", back_populates="city", uselist=False, cascade="all, delete-orphan")
@@ -59,7 +60,7 @@ class Climate(Base):
     mean_oct_max = Column(Integer, nullable=True)
     mean_nov_max = Column(Integer, nullable=True)
     mean_dec_max = Column(Integer, nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
 
     city = relationship("City", back_populates="climate")
 
@@ -79,7 +80,7 @@ class CostOfLiving(Base):
     groceries_index = Column(Float, nullable=True)
     restaurant_price_index = Column(Float, nullable=True)
     local_purchasing_power_index = Column(Float, nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
     
     city = relationship("City", back_populates="cost_of_living")
 
@@ -91,7 +92,7 @@ class Guide(Base):
     
     eurostat_code = Column(String(50), ForeignKey('cities.eurostat_code'), primary_key=True)
     text = Column(String(10000), nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
     
     city = relationship("City", back_populates="guide")
 
@@ -102,7 +103,7 @@ class Housing(Base):
     rent_per_sqm = Column(Float, nullable=True)
     area_per_person = Column(Float, nullable=True)
     erasmus_factor = Column(Float, nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
     
     city = relationship("City", back_populates="housing")
 
@@ -116,7 +117,7 @@ class Metrics(Base):
     safety_index = Column(Float, nullable=True)
     university_count = Column(Integer, nullable=True)
     public_transport_satisfaction = Column(Float, nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
     
     city = relationship("City", back_populates="metrics")
 
@@ -130,7 +131,7 @@ class TransportBudget(Base):
     source = Column(String(50), nullable=True)
     source_date = Column(Date, nullable=True)
     monthly_ticket = Column(Float, nullable=True)
-    last_updated = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
 
     city = relationship("City", back_populates="transport_budget")
 
@@ -142,7 +143,7 @@ class University(Base):
     
     erasmus_code = Column(String(50), primary_key=True)
     name = Column(String(255), nullable=False, index=True)
-    english_name = Column(String(255), nullable=False, index=True)
+    english_name = Column(String(255), nullable=True, index=True)
     eurostat_code = Column(String(50), ForeignKey('cities.eurostat_code'), nullable=False, index=True)
     country_code = Column(String(10), nullable=True)
     category = Column(String(100), nullable=True)
@@ -167,7 +168,7 @@ class University(Base):
     women_share = Column(Float, nullable=True)
     foreign_share = Column(Float, nullable=True)
     mobile_share = Column(Float, nullable=True)
-    last_updated = Column(Date, nullable=True)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
 
     city = relationship("City", back_populates="universities")
 
@@ -193,7 +194,15 @@ class Subscriber(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(120), unique=True, nullable=False)
-    date_joined = Column(DateTime, default=func.now())
+    is_active = Column(Boolean, default=True, nullable=False)
+    date_joined = Column(DateTime, server_default=func.now())
+    last_login = Column(DateTime, nullable=True)
+    login_token = Column(String(64), unique=True, nullable=True)
+    token_expiry = Column(DateTime, nullable=True)
 
     def __repr__(self):
         return f'<Subscriber {self.email}>'
+
+    @staticmethod
+    def generate_token():
+        return uuid.uuid4().hex

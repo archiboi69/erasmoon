@@ -468,7 +468,6 @@ class DatabaseManager:
                     # Create new record with only the data present in the DataFrame
                     new_record_data = {column: value for column, value in row.items() if column != 'eurostat_code'}
                     new_record_data['eurostat_code'] = eurostat_code
-                    new_record_data['last_updated'] = date.today()
                     new_record = Metrics(**new_record_data)
                     session.add(new_record)
             
@@ -515,27 +514,47 @@ class DataProcessor:
         Returns:
             Dict[str, Any]: Dictionary containing enriched city data for index.
         """
-        enriched_city = {
-            'rank': None,
-            'eurostat_code': city.eurostat_code,
-            'local_name': city.local_name,
-            'english_name': city.english_name,
-            'local_country': city.local_country,
-            'english_country': city.english_country,
-            'country_emoji': city.country_emoji,
-            'population': city.population,
-            'erasmus_population': city.erasmus_population,
-            'monthly_budget': self._round_to_euro(getattr(city.cost_of_living, 'monthly_budget', None)),
-            'cost_of_living_plus_rent': getattr(city.cost_of_living, 'cost_of_living_plus_rent_index', None),
-            'mean_feb_min': getattr(city.climate, 'mean_feb_min', None),
-            'mean_jul_max': getattr(city.climate, 'mean_jul_max', None),
-            'safety_index': getattr(city.metrics, 'safety_index', None),
-            'university_count': getattr(city.metrics, 'university_count', None),
-            'public_transport_satisfaction': getattr(city.metrics, 'public_transport_satisfaction', None),
-            'language_percentages': self._compute_language_proficiency(city)
-        }
+        try:
+            enriched_city = {
+                'rank': None,
+                'eurostat_code': city.eurostat_code,
+                'local_name': city.local_name,
+                'english_name': city.english_name,
+                'local_country': city.local_country,
+                'english_country': city.english_country,
+                'country_emoji': city.country_emoji,
+                'population': city.population,
+                'erasmus_population': city.erasmus_population,
+                'monthly_budget': self._round_to_euro(getattr(city.cost_of_living, 'monthly_budget', None)),
+                'cost_of_living_plus_rent': getattr(city.cost_of_living, 'cost_of_living_plus_rent_index', None),
+                'mean_feb_min': getattr(city.climate, 'mean_feb_min', None),
+                'mean_jul_max': getattr(city.climate, 'mean_jul_max', None),
+                'safety_index': getattr(city.metrics, 'safety_index', None),
+                'university_count': getattr(city.metrics, 'university_count', None),
+                'public_transport_satisfaction': getattr(city.metrics, 'public_transport_satisfaction', None),
+            }
 
-        return enriched_city
+            # Add language proficiency data with error handling
+            try:
+                enriched_city['language_percentages'] = self._compute_language_proficiency(city)
+            except TypeError as te:
+                logging.error(f"TypeError in _compute_language_proficiency for city {city.english_name}: {te}")
+                enriched_city['language_percentages'] = {}
+            except Exception as e:
+                logging.error(f"Unexpected error in _compute_language_proficiency for city {city.english_name}: {e}")
+                enriched_city['language_percentages'] = {}
+
+            return enriched_city
+
+        except AttributeError as ae:
+            logging.error(f"AttributeError in enrich_overview for city {city.english_name}: {ae}")
+            raise
+        except TypeError as te:
+            logging.error(f"TypeError in enrich_overview for city {city.english_name}: {te}")
+            raise
+        except Exception as e:
+            logging.error(f"Unexpected error in enrich_overview for city {city.english_name}: {e}")
+            raise
 
     def enrich_full_details(self, city: Any) -> Dict[str, Any]:
         """
@@ -548,8 +567,11 @@ class DataProcessor:
             Dict[str, Any]: Dictionary containing enriched city data for detail.
         """
         try:
+            logging.info(f"Starting to enrich full details for city: {city.english_name}")
+            
             # First, get the general data
             enriched_city = self.enrich_overview(city)
+            logging.debug("Successfully enriched overview data")
 
             # Add climate data
             climate_data = {}
@@ -558,26 +580,49 @@ class DataProcessor:
                 climate_data[f'mean_{month}_max'] = getattr(city.climate, f'mean_{month}_max', None)
             
             enriched_city.update(climate_data)
+            logging.debug("Successfully added climate data")
 
             # Add detailed fields
-            enriched_city.update({
-                'lat': city.lat,
-                'lon': city.lon,
-                'rent_budget': self._round_to_euro(self._compute_rent_budget(
+            try:
+                rent_budget = self._compute_rent_budget(
                     rent_per_sqm=getattr(city.housing, 'rent_per_sqm', None), 
                     area_per_person=getattr(city.housing, 'area_per_person', None), 
                     erasmus_factor=getattr(city.housing, 'erasmus_factor', None),
                     monthly_budget=getattr(city.cost_of_living, 'monthly_budget', None),
                     rent_index=getattr(city.cost_of_living, 'rent_index', None)
-                )),
-                'groceries_budget': self._round_to_euro(self._compute_groceries_budget(getattr(city.cost_of_living, 'groceries_index', None))),
+                )
+                logging.debug(f"Computed rent budget: {rent_budget}")
+            except Exception as e:
+                logging.error(f"Error computing rent budget: {e}")
+                rent_budget = None
+
+            try:
+                groceries_budget = self._compute_groceries_budget(getattr(city.cost_of_living, 'groceries_index', None))
+                logging.debug(f"Computed groceries budget: {groceries_budget}")
+            except Exception as e:
+                logging.error(f"Error computing groceries budget: {e}")
+                groceries_budget = None
+
+            enriched_city.update({
+                'lat': city.lat,
+                'lon': city.lon,
+                'rent_budget': self._round_to_euro(rent_budget),
+                'groceries_budget': self._round_to_euro(groceries_budget),
                 'transport_budget': self._round_to_euro(getattr(city.transport_budget, 'monthly_ticket', None)),
                 'overview_text': getattr(city.guide, 'text', None),
                 'housing': {
                     'rent_per_sqm': getattr(city.housing, 'rent_per_sqm', None),
                 },
-                'universities': self._process_universities(city.universities)
             })
+            logging.debug("Successfully added detailed fields")
+
+            # Process universities
+            try:
+                enriched_city['universities'] = self._process_universities(city.universities)
+                logging.debug("Successfully processed universities")
+            except Exception as e:
+                logging.error(f"Error processing universities: {e}")
+                enriched_city['universities'] = []
 
             return enriched_city
 
@@ -586,6 +631,11 @@ class DataProcessor:
             raise
         except TypeError as te:
             logging.error(f"TypeError in enrich_full_details for city {city.english_name}: {te}")
+            # Log all attributes
+            for attr in dir(city):
+                if not attr.startswith('_'):
+                    value = getattr(city, attr)
+                    logging.error(f"Type of {attr}: {type(value)}, Value: {value}")
             raise
         except Exception as e:
             logging.error(f"Unexpected error in enrich_full_details for city {city.english_name}: {e}")
