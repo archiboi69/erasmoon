@@ -28,11 +28,17 @@ lease:
     # Change this if you are running multiple clusters in a single app!
     key: "${FLY_APP_NAME}/primary"
 
-
 proxy:
+  # Bind address for the proxy to listen on.
   addr: ":8080"
+
+  # Hostport of your application - replace 8081 with whatever port
+  # your application is listening on!
   target: "localhost:8081"
+
+  # Filename of the SQLite database you want to use for TXID tracking.
   db: "cities.db"
+
 
 exec:
   - cmd: "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8081"
