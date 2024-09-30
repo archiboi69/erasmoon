@@ -204,3 +204,15 @@ class Subscriber(Base):
     @staticmethod
     def generate_token():
         return uuid.uuid4().hex
+
+class Language(Base):
+    __tablename__ = 'languages'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    language = Column(String(100), nullable=False)
+    country = Column(String(100), nullable=False)
+    percentage = Column(Float, nullable=False)
+    last_updated = Column(DateTime, nullable=True, server_default=func.now(), onupdate=func.now())
+
+    def __repr__(self):
+        return f"<Language(id={self.id}, language='{self.language}', country='{self.country}', percentage={self.percentage})>"
