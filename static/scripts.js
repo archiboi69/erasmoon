@@ -892,19 +892,30 @@
                 return;
             }
            
-            const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
             months.forEach((month) => {
-                const min = parseInt(this.weatherDetail.dataset[`mean-${month}-min`]);
-                const max = parseInt(this.weatherDetail.dataset[`mean-${month}-max`]);
+                const minKey = `mean${month}Min`;
+                const maxKey = `mean${month}Max`;
+        
+                const minValue = this.weatherDetail.dataset[minKey];
+                const maxValue = this.weatherDetail.dataset[maxKey];
+
+                console.log(`Month: ${month}, Raw min (${minKey}): ${minValue}, Raw max (${maxKey}): ${maxValue}`);
+
+                // Use parseFloat instead of parseInt and round to nearest integer
+                const min = minValue !== undefined ? Math.round(parseFloat(minValue)) : null;
+                const max = maxValue !== undefined ? Math.round(parseFloat(maxValue)) : null;
+
+                console.log(`Month: ${month}, Parsed min: ${min}, Parsed max: ${max}`);
                             
-                const tempRangeElement = document.getElementById(month);
+                const tempRangeElement = document.getElementById(month.toLowerCase());
                 if (tempRangeElement) {
-                    if (!isNaN(min) && !isNaN(max)) {
-                        console.log('Attempting to create temp bar')
+                    if (min !== null && max !== null && !isNaN(min) && !isNaN(max)) {
+                        console.log(`Creating temp bar for ${month}: min=${min}, max=${max}`);
                         this.createTempBar(min, max, tempRangeElement);
                     } else {
-                        console.log(`No valid data for ${month}`);
+                        console.log(`No valid data for ${month}: min=${min}, max=${max}`);
                     }
                 } else {
                     console.warn(`Element for month "${month}" not found.`);
