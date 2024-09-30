@@ -39,6 +39,5 @@ proxy:
   # Filename of the SQLite database you want to use for TXID tracking.
   db: "cities.db"
 
-
 exec:
   - cmd: "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8081"

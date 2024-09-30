@@ -20,6 +20,12 @@ primary_region = 'waw'
   names = ["erasmoon.com", "www.erasmoon.com"]
 
 [[vm]]
+  region = 'waw'
+  size = 'shared-cpu-1x'
+  memory = 512
+
+[[vm]]
+  region = 'mad'
   size = 'shared-cpu-1x'
   memory = 512
 
