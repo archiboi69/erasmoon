@@ -419,6 +419,7 @@
          */
         computeAndRenderRatings: function () {
             const selectedLanguage = this.languageSelect.value;
+            console.log('Computing ratings for', selectedLanguage);
 
             // Helper function to parse data and handle missing values
             function parseData(value) {
@@ -455,7 +456,7 @@
                 const eurostatCode = card.dataset.eurostatCode;
                 const erasmusPopulation = parseData(card.dataset.erasmusPopulation);
                 const publicTransportSatisfaction = parseData(card.dataset.publicTransportSatisfaction);
-                const languagePercentage = parseFloat(card.dataset[`lang-${selectedLanguage.toLowerCase()}`]) || 0;
+                const languagePercentage = parseFloat(card.dataset[`lang${selectedLanguage}`]) || 0;
                 const safetyIndex = parseFloat(card.dataset.safetyIndex) || 60;
                 const languageLabel = card.querySelector('.city-grid__language-label');
     
