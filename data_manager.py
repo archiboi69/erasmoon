@@ -6,14 +6,14 @@ import pandas as pd
 import logging
 from sqlalchemy.orm import joinedload
 from sqlalchemy import desc
-from models import City, TransportBudget
+from models import City, Metrics
 from database import SessionLocal
 from contextlib import contextmanager
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 import re
 from sqlalchemy import func
-
+from datetime import date
 
 logger = logging.getLogger(__name__)
 
@@ -110,103 +110,126 @@ class DataLoader:
             logging.error(f"Unexpected error loading language data: {e}")
             return {}
 
-    def import_eurostat_data(self, theme_dir: str) -> pd.DataFrame:
+    def import_eurostat_urb_percep(self, topic: str = None) -> pd.DataFrame:
         """
-        Imports or updates Eurostat data from CSV files in a specific theme directory.
+        Imports Eurostat data for a given topic or all topics if no topic is specified.
 
         Args:
-            theme_dir (str): Name of the theme directory (e.g., 'transport-budget').
+            topic (str): The topic to import.
 
         Returns:
-            pd.DataFrame: Processed Eurostat data.
+            pd.DataFrame: The Eurostat data with one row per city.
+        """
+        def fallbacks(group):
+            for pair in indicator_pairs:
+                pair_data = group[group['indic_ur'].isin(pair)]
+                if len(pair_data) == 2:
+                    return pair_data['OBS_VALUE'].sum()
+            return None
+        
+        file_path = os.path.join(self.data_dir, 'eurostat', 'urb_percep_linear.csv')
+        
+        # Initialize an empty DataFrame
+        result_df = pd.DataFrame({'eurostat_code': self.supported_cities})
+        
+        if topic == 'safety' or topic is None:
+            safety_indicators = ['PS3290V', 'PS3291V', 'PS3300V', 'PS3301V', 'PS3514V', 'PS3515V', 'PS3519V', 'PS3520V']
+            safety_df = self._load_eurostat_linear_csv(file_path, safety_indicators)
+
+            if not safety_df.empty:
+                # Define indicator pairs in order of preference
+                indicator_pairs = [('PS3514V', 'PS3515V'), ('PS3290V', 'PS3291V'), 
+                                   ('PS3519V', 'PS3520V'), ('PS3300V', 'PS3301V')]
+
+                # Apply fallbacks to each group
+                safety_data = safety_df.groupby('cities').apply(fallbacks).reset_index()
+                
+                safety_data.columns = ['eurostat_code', 'safety_index']
+                safety_data['safety_index'] = safety_data['safety_index'].round(1)
+
+                # Merge with result_df
+                result_df = result_df.merge(safety_data, on='eurostat_code', how='left')
+            else:
+                # If no data was found, add an empty 'safety_index' column
+                result_df['safety_index'] = None
+                logging.warning("No safety data found for any city.")
+    
+        if topic == 'public_transport' or topic is None:
+            public_transport_indicators = ['PS1012V', 'PS1013V']
+            public_transport_df = self._load_eurostat_linear_csv(file_path, public_transport_indicators)
+
+            if not public_transport_df.empty:
+                # Sum the values for both indicators for each city
+                public_transport_data = public_transport_df.groupby('cities')['OBS_VALUE'].sum().reset_index()
+                public_transport_data = public_transport_data.rename(columns={'cities': 'eurostat_code', 'OBS_VALUE': 'public_transport_satisfaction'})
+                public_transport_data['public_transport_satisfaction'] = public_transport_data['public_transport_satisfaction'].round(1)
+
+                # Merge with result_df
+                result_df = result_df.merge(public_transport_data, on='eurostat_code', how='left')
+            else:
+                # If no data was found, add an empty 'public_transport_satisfaction' column
+                result_df['public_transport_satisfaction'] = None
+                logging.warning("No public transport data found for any city.")
+
+        # Sort the result DataFrame by eurostat_code
+        result_df = result_df.sort_values('eurostat_code').reset_index(drop=True)
+        
+        # Remove rows where only eurostat_code is present (all other columns are null)
+        result_df = result_df.dropna(subset=result_df.columns.difference(['eurostat_code']), how='all')
+        
+        return result_df
+
+    def _load_eurostat_linear_csv(self, file_path: str, indicators: List[str] = None) -> pd.DataFrame:
+        """
+        Loads Eurostat linear data from a CSV file.
         """
         try:
-            dfs = []
-            theme_path = os.path.join(self.eurostat_data_dir, theme_dir)
-            for file_name in os.listdir(theme_path):
-                if file_name.endswith('.csv'):
-                    file_path = os.path.join(theme_path, file_name)
-                    logging.info(f"Importing Eurostat data from {file_path}")
+            df = pd.read_csv(file_path)
+            # Ensure the DataFrame has the expected columns
+            expected_columns = ['DATAFLOW', 'indic_ur', 'cities', 'TIME_PERIOD', 'OBS_VALUE']
+            df = df[expected_columns]
+            
+            # Filter the DataFrame for the specified indicators
+            if indicators:
+                df = df[df['indic_ur'].isin(indicators)]
 
-                    # Read the CSV file
-                    df = pd.read_csv(file_path)
-                    dfs.append(df)
+            # Create a set of supported cities and countries for faster lookup
+            supported_cities_set = set(self.supported_cities)
+            supported_countries_set = {city[:2] for city in self.supported_cities}
+            
+            # Use numpy's vectorized operations for filtering
+            mask = df['cities'].isin(supported_cities_set) | (df['cities'].isin(supported_countries_set))
+            df = df[mask]
+            
+            # Convert the TIME_PERIOD column to datetime
+            df['TIME_PERIOD'] = pd.to_datetime(df['TIME_PERIOD'], format='%Y')
+            
+            # Convert the OBS_VALUE column to numeric, coercing errors to NaN
+            df['OBS_VALUE'] = pd.to_numeric(df['OBS_VALUE'], errors='coerce')
+            
+            # Drop rows with missing values in OBS_VALUE
+            df = df.dropna(subset=['OBS_VALUE'])
 
-            # Concatenate all dataframes
-            combined_df = pd.concat(dfs, ignore_index=True)
+            # Group by cities and indic_ur, then sort within each group by TIME_PERIOD
+            # to get the newest value for each indicator for each city
+            df = df.sort_values(['cities', 'indic_ur', 'TIME_PERIOD'], ascending=[True, True, False])
+            # Keep only the first (newest) row for each city-indicator combination
+            df = df.groupby(['cities', 'indic_ur']).first().reset_index()
+            
+            return df
 
-            # Process the combined data
-            processed_df = self._process_eurostat_data(combined_df, theme_dir)
-
-            logging.info(f"Eurostat data for {theme_dir} imported and processed successfully.")
-            return processed_df
         except FileNotFoundError as e:
-            logging.error(f"Eurostat file not found: {e.filename}")
+            logging.error(f"File not found: {e.filename}")
+            return pd.DataFrame()
+        except pd.errors.ParserError as e:
+            logging.error(f"Error parsing CSV file {file_path}: {e}")
             return pd.DataFrame()
         except pd.errors.EmptyDataError:
-            logging.error(f"One of the files is empty.")
+            logging.error(f"Eurostat linear file is empty {file_path}")
             return pd.DataFrame()
         except Exception as e:
-            logging.error(f"Error importing Eurostat data: {e}")
+            logging.error(f"Error loading Eurostat linear file {file_path}: {e}")
             return pd.DataFrame()
-
-    def _process_eurostat_data(self, df: pd.DataFrame, theme_dir: str) -> pd.DataFrame:
-        """
-        Process the Eurostat data based on the theme directory.
-        This method should be customized based on the specific needs of each dataset.
-        """
-        # Ensure the DataFrame has the expected columns
-        expected_columns = ['DATAFLOW', 'LAST UPDATE', 'freq', 'indic_ur', 'cities', 'TIME_PERIOD', 'OBS_VALUE']
-        df = df[expected_columns]
-
-        # Drop rows with missing values in OBS_VALUE
-        df = df.dropna(subset=['OBS_VALUE'])
-
-        # Convert the TIME_PERIOD column to datetime
-        df['TIME_PERIOD'] = pd.to_datetime(df['TIME_PERIOD'], format='%Y')
-
-        # Convert the OBS_VALUE column to numeric, coercing errors to NaN
-        df['OBS_VALUE'] = pd.to_numeric(df['OBS_VALUE'], errors='coerce')
-
-        if theme_dir == 'transport-budget':
-            # Drop rows where OBS_VALUE is 0
-            df = df[df['OBS_VALUE'] != 0]
-            
-            # Group by cities and TIME_PERIOD, keeping only the newest data for each city
-            df = df.sort_values('TIME_PERIOD', ascending=False).groupby('cities').first().reset_index()
-            
-            # Process data specifically for transport budget
-            transport_budget_df = pd.DataFrame(columns=expected_columns)
-            for city in self.supported_cities:
-                city_data = df[df['cities'] == city]
-                if city_data.empty:
-                    # Fallback to the Functional Urban Area
-                    city_data = df[df['cities'] == city[:-1] + 'F']
-                    if city_data.empty:
-                        # Fallback to the Country
-                        city_data = df[df['cities'] == city[:2]]
-                
-                if not city_data.empty:
-                    transport_budget_df = pd.concat([transport_budget_df, city_data], ignore_index=True)
-                else:
-                    # Add a row for the city with empty values
-                    empty_row = pd.DataFrame({
-                        'DATAFLOW': [None],
-                        'LAST UPDATE': [None],
-                        'freq': [None],
-                        'indic_ur': [None],
-                        'cities': [city],
-                        'TIME_PERIOD': [None],
-                        'OBS_VALUE': [None]
-                    })
-                    transport_budget_df = pd.concat([transport_budget_df, empty_row], ignore_index=True)
-                    logging.warning(f"No data found for city {city} or its fallbacks.")
-            
-            return transport_budget_df
-
-        # For other themes, you can add more processing logic here
-        return df
-
 
 class DataManager:
     """
@@ -266,6 +289,20 @@ class DataManager:
             data_processor=self.data_processor
         )
 
+    def update_eurostat_urb_percep(self, topic: str = None) -> pd.DataFrame:
+        """
+        Updates the Eurostat data for a given topic or all topics if no topic is specified.
+
+        Args:
+            topic (str): The topic to update.
+    
+        Returns:
+            pd.DataFrame: The updated Eurostat data.
+        """
+        urb_percep_df = self.data_loader.import_eurostat_urb_percep(topic)
+        self.database_manager.update_metrics_db(urb_percep_df)
+
+
     @staticmethod
     def sanitize_eurostat_code(eurostat_code: str) -> Optional[str]:
         """
@@ -292,56 +329,6 @@ class DataManager:
         """
         self.database_manager.close()
         logging.info("DataManager resources have been released.")
-
-    def update_transport_budget(self):
-        """
-        Updates the transport budget data in the database.
-        """
-        theme_dir = 'transport-budget'
-        transport_budget_df = self.data_loader.import_eurostat_data(theme_dir)
-        self._update_transport_budget_table(transport_budget_df)
-
-    def _update_transport_budget_table(self, df: pd.DataFrame):
-        """
-        Updates the transport_budget table with new data from a DataFrame.
-
-        Args:
-            df (pd.DataFrame): The DataFrame containing the transport budget data to update.
-        """
-        with self.database_manager.get_session() as session:
-            for _, row in df.iterrows():
-                city = row['cities']
-                existing_record = session.query(TransportBudget).filter_by(eurostat_code=city).first()
-                
-                # Convert NaT (Not a Time) to None for source_date
-                source_date = None if pd.isna(row['TIME_PERIOD']) else row['TIME_PERIOD']
-                
-                # Convert NaN to None for monthly_ticket
-                monthly_ticket = None if pd.isna(row['OBS_VALUE']) else float(row['OBS_VALUE'])
-                
-                if existing_record:
-                    # Update existing record
-                    existing_record.source = row['DATAFLOW']
-                    existing_record.source_date = source_date
-                    existing_record.monthly_ticket = monthly_ticket
-                    existing_record.last_updated = func.now()  # Update the last_updated timestamp
-                else:
-                    # Insert new record
-                    new_record = TransportBudget(
-                        eurostat_code=city,
-                        source=row['DATAFLOW'],
-                        source_date=source_date,
-                        monthly_ticket=monthly_ticket,
-                        last_updated=func.now()  # Set the initial last_updated timestamp
-                    )
-                    session.add(new_record)
-            
-            try:
-                session.commit()
-            except Exception as e:
-                session.rollback()
-                logging.error(f"Error committing changes to transport_budget table: {e}")
-                raise
 
 
 class DatabaseManager:
@@ -374,7 +361,7 @@ class DatabaseManager:
             session.rollback()
             logger.error(f"Database connection error: {str(e)}")
             logger.error(f"Current working directory: {os.getcwd()}")
-            logger.error(f"Files in /data: {os.listdir('/data')}")
+            logger.error(f"Files in current directory: {os.listdir('.')}")
             raise
         finally:
             session.close()
@@ -457,6 +444,41 @@ class DatabaseManager:
         except Exception as e:
             logging.error(f"Error retrieving city detail for {eurostat_code}: {e}")
             return None
+    
+    def update_metrics_db(self, df: pd.DataFrame):
+        """
+        Updates the Metrics table with new data from a DataFrame.
+        Only updates the fields that are present in the DataFrame.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the Eurostat data to update.
+        """
+        with self.get_session() as session:
+            for _, row in df.iterrows():
+                eurostat_code = row['eurostat_code']
+                existing_record = session.query(Metrics).filter_by(eurostat_code=eurostat_code).first()
+                
+                if existing_record:
+                    # Update existing record
+                    for column, value in row.items():
+                        if column != 'eurostat_code' and hasattr(existing_record, column):
+                            setattr(existing_record, column, value)
+                    existing_record.last_updated = date.today()  # Update the last_updated timestamp
+                else:
+                    # Create new record with only the data present in the DataFrame
+                    new_record_data = {column: value for column, value in row.items() if column != 'eurostat_code'}
+                    new_record_data['eurostat_code'] = eurostat_code
+                    new_record_data['last_updated'] = date.today()
+                    new_record = Metrics(**new_record_data)
+                    session.add(new_record)
+            
+            try:
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                logging.error(f"Error committing changes to Metrics table: {e}")
+                raise
+    
         
     def close(self):
         """
