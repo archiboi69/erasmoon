@@ -1,14 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Not Found</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <h1>City Not Found</h1>
-    <p>Sorry, we couldn't find any information for the city: {{ city_name }}</p>
-    <a href="{{ url_for('index') }}">Back to Home</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}City Not Found - erasmoon{% endblock %}
+
+{% block body_class %}city-not-found-page{% endblock %}
+
+{% block content %}
+    <section class="not-found">
+        <div class="not-found__container container">
+            <h1 class="not-found__title">City Not Found</h1>
+            <p class="not-found__message">Sorry, we couldn't find any information for the city: <strong>{{ city_name }}</strong></p>
+            <a href="{{ url_for('index') }}" class="not-found__back-link">← Back to Home</a>
+        </div>
+    </section>
+{% endblock %}

@@ -1,270 +1,215 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ city.english_name }} - Erasmus City Guide</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='favicon-64x64.png') }}">
-    <link rel="icon" type="image/png" sizes="128x128" href="{{ url_for('static', filename='favicon-128x128.png') }}">
-    <link rel="icon" type="image/png" sizes="160x160" href="{{ url_for('static', filename='favicon-160x160.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon-180x180.png') }}">
+{% extends "base.html" %}
+
+{% block title %}{{ city.english_name }} - Erasmus City Guide{% endblock %}
+
+{% block extra_head %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-</head>
-<body class="city-detail-page">
-    <header class="header">
-        <div class="header__container container">
-            <div class="header__logo">
-                <h1>🌙 erasmoon</h1>
+{% endblock %}
+
+{% block body_class %}city-detail-page{% endblock %}
+
+{% block content %}
+    <section class="hero" id="hero">
+        <div class="hero__container container">
+            <div class="hero__image-container">
+                <a href="{{ url_for('index') }}" class="hero__back-arrow">←</a>
+                <img src="{{ url_for('static', filename='images/' + city['english_name']|sanitize_filename + '_640.jpg') }}" alt="{{ city.english_name }}" class="hero__image">
             </div>
-            <div class="header__join">
-                <button id="joinButton" class="header__join-button">Join</button>
+            <div class="hero__header">
+                <h2 class="hero__name">{{ city.english_name }}</h2>
+                <div class="hero__country">{{ city.english_country }}</div>
+                <div class="hero__native-info">
+                    <span class="hero__native-name">{{ city.country_emoji }} {{ city.local_name }}, {{ city.local_country }}</span>
+                </div>
             </div>
         </div>
-    </header>
+    </section>
 
-    <main class="layout">
-        <section class="hero" id="hero">
-            <div class="hero__container container">
-                <div class="hero__image-container">
-                    <a href="{{ url_for('index') }}" class="hero__back-arrow">←</a>
-                    <img src="{{ url_for('static', filename='images/' + city['english_name']|sanitize_filename + '_640.jpg') }}" alt="{{ city.english_name }}" class="hero__image">
+    <nav class="tabs">
+        <div class="tabs__container container">
+            <ul class="tabs__list">
+                <li class="tabs__item"><a href="#overview" class="tabs__link">Overview</a></li>
+                <li class="tabs__item"><a href="#weather" class="tabs__link">Weather</a></li>
+                <li class="tabs__item"><a href="#budget" class="tabs__link">Budget</a></li>
+                <li class="tabs__item"><a href="#universities" class="tabs__link">Universities</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="overview" id="overview">
+        <div class="overview__container container">
+            <h2 class="overview__title">Overview</h2>
+            <div class="overview__subsection overview__subsection--ratings">
+                <div class="rating rating--moon-score">
+                    <span class="rating__label rating__label--moon-score" id="moonScoreLabel">moonScore</span>
+                    <span class="rating__emoji"></span>
+                    <span class="rating__value rating__label--moon-score" id="moonScoreValue"></span>
                 </div>
-                <div class="hero__header">
-                    <h2 class="hero__name">{{ city.english_name }}</h2>
-                    <div class="hero__country">{{ city.english_country }}</div>
-                    <div class="hero__native-info">
-                        <span class="hero__native-name">{{ city.country_emoji }} {{ city.local_name }}, {{ city.local_country }}</span>
+                <div class="rating rating--popularity">
+                    <span class="rating__label">Popularity</span>
+                    <div class="rating__bar">
+                        <div class="rating__fill" id="popularityFill"></div>
+                    </div>
+                    <span class="rating__value" id="popularityValue"></span>
+                </div>
+                <div class="rating rating--cost">
+                    <span class="rating__label">Affordability</span>
+                    <div class="rating__bar">
+                        <div class="rating__fill" id="costFill"></div>
+                    </div>
+                    <span class="rating__value" id="costValue"></span>
+                </div>
+                <div class="rating rating--safety">
+                    <span class="rating__label">Safety</span>
+                    <div class="rating__bar">
+                        <div class="rating__fill" id="safetyFill"></div>
+                    </div>
+                    <span class="rating__value" id="safetyValue"></span>
+                </div>
+                <div class="rating rating--public-transport">
+                    <span class="rating__label">Public Transport</span>
+                    <div class="rating__bar">
+                        <div class="rating__fill" id="publicTransportFill"></div>
+                    </div>
+                    <span class="rating__value" id="publicTransportValue"></span>
+                </div>
+                <div class="rating rating--language">
+                    <span class="rating__label language-label" id="languageLabel">Language</span>
+                    <div class="rating__bar">
+                        <div class="rating__fill" id="languageFill"></div>
+                    </div>
+                    <span class="rating__value" id="languageValue"></span>
+                </div>
+            </div>
+            <div class="overview__subsection overview__subsection--stats">
+                <p><strong>Population:</strong> {{ '{:,}'.format(city.population) }}</p>
+                <p><strong>Erasmus Population:</strong> {{ '{:,}'.format(city.erasmus_population) }}</p>
+                <p><strong>University Count:</strong> {{ '{:,}'.format(city.university_count) }}</p>
+            </div>
+            {% if city.overview_text %}
+                <div class="overview__subsection overview__subsection--guide">
+                    <div class="overview__guide-preview" id="guidePreview">{{ city.overview_text[:250]|safe }}</div>
+                    <div class="overview__guide-full" id="guideFull" style="display: none;">{{ city.overview_text|safe }}</div>
+                    <button id="readMoreBtn" class="overview__read-more-button">Read more</button>    
+                </div>
+            {% else %}
+                <p>No guide available for this city.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="weather" id="weather">
+        <div class="weather__container container">
+            <h2 class="weather__title">Weather</h2>
+            <h3 class="weather__subtitle">Temperature</h3>
+            
+            <div class="weather__detail" id="weatherDetail"
+                {% for month in ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] %}
+                data-mean-{{ month }}-min="{{ city['mean_' ~ month ~ '_min'] if city['mean_' ~ month ~ '_min'] is not none else '' }}"
+                data-mean-{{ month }}-max="{{ city['mean_' ~ month ~ '_max'] if city['mean_' ~ month ~ '_max'] is not none else '' }}"
+                {% endfor %}
+            >
+                <p>Average temperature range for each month:</p>
+                <div class="temp-range-container" data-month="January">
+                    <div class="temp-range" id="jan"></div>
+                </div>    
+                <div class="temp-range-container" data-month="February">
+                    <div class="temp-range" id="feb"></div>
+                </div>
+                <div class="temp-range-container" data-month="March">
+                    <div class="temp-range" id="mar"></div>
+                </div>
+                <div class="temp-range-container" data-month="April">
+                    <div class="temp-range" id="apr"></div>
+                </div>
+                <div class="temp-range-container" data-month="May">
+                    <div class="temp-range" id="may"></div>
+                </div>
+                <div class="temp-range-container" data-month="June">
+                    <div class="temp-range" id="jun"></div>
+                </div>
+                <div class="temp-range-container" data-month="July">
+                    <div class="temp-range" id="jul"></div>
+                </div>
+                <div class="temp-range-container" data-month="August">
+                    <div class="temp-range" id="aug"></div>
+                </div>
+                <div class="temp-range-container" data-month="September">
+                    <div class="temp-range" id="sep"></div>
+                </div>
+                <div class="temp-range-container" data-month="October">
+                    <div class="temp-range" id="oct"></div>
+                </div>
+                <div class="temp-range-container" data-month="November">
+                    <div class="temp-range" id="nov"></div>
+                </div>
+                <div class="temp-range-container" data-month="December">
+                    <div class="temp-range" id="dec"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="budget" id="budget">
+        <div class="budget__container container">
+            <h2 class="budget__title">Budget</h2>
+            <h3 class="budget__subtitle">Monthly breakdown</h3>
+            <div class="budget__breakdown">
+                <canvas class="budget__chart" id="budgetPieChart"></canvas>
+                <div class="budget__table">
+                    <div class="budget__item">
+                        <span class="budget__label">💰 Total</span>
+                        <span class="budget__value">€<span id="totalBudget">{{ city.monthly_budget }}</span></span>
+                    </div>
+                    <div class="budget__item">
+                        <span class="budget__label">🔑 Rent</span>
+                        <span class="budget__value">€<span id="rentBudget">{{ city.rent_budget if city.rent_budget is not none else '-' }}</span></span>
+                    </div>
+                    <div class="budget__item">
+                        <span class="budget__label">🛒 Groceries</span>
+                        <span class="budget__value">€<span id="groceriesBudget">{{ city.groceries_budget if city.groceries_budget is not none else '-' }}</span></span>
+                    </div>
+                    <div class="budget__item">
+                        <span class="budget__label">🚀 Transport</span>
+                        <span class="budget__value">€<span id="transportBudget">{{ city.transport_budget if city.transport_budget is not none else '-' }}</span></span>
+                    </div>
+                    <div class="budget__item">
+                        <span class="budget__label">🎉 Fun!</span>
+                        <span class="budget__value">€{{ city.monthly_budget - city.rent_budget - city.groceries_budget }}</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <nav class="tabs">
-            <div class="tabs__container container">
-                <ul class="tabs__list">
-                    <li class="tabs__item"><a href="#overview" class="tabs__link">Overview</a></li>
-                    <li class="tabs__item"><a href="#weather" class="tabs__link">Weather</a></li>
-                    <li class="tabs__item"><a href="#budget" class="tabs__link">Budget</a></li>
-                    <li class="tabs__item"><a href="#universities" class="tabs__link">Universities</a></li>
-                </ul>
-            </div>
-        </nav>
-
-        <section class="overview" id="overview">
-            <div class="overview__container container">
-                <h2 class="overview__title">Overview</h2>
-                <div class="overview__subsection overview__subsection--ratings">
-                    <div class="rating rating--moon-score">
-                        <span class="rating__label rating__label--moon-score" id="moonScoreLabel">moonScore</span>
-                        <span class="rating__emoji"></span>
-                        <span class="rating__value rating__label--moon-score" id="moonScoreValue"></span>
-                    </div>
-                    <div class="rating rating--popularity">
-                        <span class="rating__label">Popularity</span>
-                        <div class="rating__bar">
-                            <div class="rating__fill" id="popularityFill"></div>
-                        </div>
-                        <span class="rating__value" id="popularityValue"></span>
-                    </div>
-                    <div class="rating rating--cost">
-                        <span class="rating__label">Affordability</span>
-                        <div class="rating__bar">
-                            <div class="rating__fill" id="costFill"></div>
-                        </div>
-                        <span class="rating__value" id="costValue"></span>
-                    </div>
-                    <div class="rating rating--safety">
-                        <span class="rating__label">Safety</span>
-                        <div class="rating__bar">
-                            <div class="rating__fill" id="safetyFill"></div>
-                        </div>
-                        <span class="rating__value" id="safetyValue"></span>
-                    </div>
-                    <div class="rating rating--public-transport">
-                        <span class="rating__label">Public Transport</span>
-                        <div class="rating__bar">
-                            <div class="rating__fill" id="publicTransportFill"></div>
-                        </div>
-                        <span class="rating__value" id="publicTransportValue"></span>
-                    </div>
-                    <div class="rating rating--language">
-                        <span class="rating__label language-label" id="languageLabel">Language</span>
-                        <div class="rating__bar">
-                            <div class="rating__fill" id="languageFill"></div>
-                        </div>
-                        <span class="rating__value" id="languageValue"></span>
-                    </div>
-                </div>
-                <div class="overview__subsection overview__subsection--stats">
-                    <p><strong>Population:</strong> {{ '{:,}'.format(city.population) }}</p>
-                    <p><strong>Erasmus Population:</strong> {{ '{:,}'.format(city.erasmus_population) }}</p>
-                    <p><strong>University Count:</strong> {{ '{:,}'.format(city.university_count) }}</p>
-                </div>
-                {% if city.overview_text %}
-                    <div class="overview__subsection overview__subsection--guide">
-                        <div class="overview__guide-preview" id="guidePreview">{{ city.overview_text[:250]|safe }}</div>
-                        <div class="overview__guide-full" id="guideFull" style="display: none;">{{ city.overview_text|safe }}</div>
-                        <button id="readMoreBtn" class="overview__read-more-button">Read more</button>    
-                    </div>
-                {% else %}
-                    <p>No guide available for this city.</p>
-                {% endif %}
-            </div>
-        </section>
-
-        <section class="weather" id="weather">
-            <div class="weather__container container">
-                <h2 class="weather__title">Weather</h2>
-                <h3 class="weather__subtitle">Temperature</h3>
-                
-                <div class="weather__detail" id="weatherDetail"
-                    {% for month in ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] %}
-                    data-mean-{{ month }}-min="{{ city['mean_' ~ month ~ '_min'] if city['mean_' ~ month ~ '_min'] is not none else '' }}"
-                    data-mean-{{ month }}-max="{{ city['mean_' ~ month ~ '_max'] if city['mean_' ~ month ~ '_max'] is not none else '' }}"
+    <section class="universities" id="universities">
+        <div class="universities__container container">
+            <h2 class="universities__title">Universities</h2>
+            <div class="universities__map" id="map"></div>
+            {% if city.universities %}
+                <ol class="universities__list">
+                    {% for uni in city.universities %}
+                        <li class="universities__item" data-index="{{ loop.index }}">
+                            <h3 class="universities__name">{{ uni.english_name if uni.english_name else uni.name }}</h3>
+                            <p class="universities__details">{{ city.country_emoji }} {{ uni.name }}</p>
+                            <p class="universities__code">Erasmus Code: {{ uni.erasmus_code }}</p>
+                            <p class="universities__category">Category: {{ uni.category }}</p>
+                            <p class='universities__total-students'>Students: {{ '{:,}'.format(uni.total_students) if uni.total_students else 'N/A' }}</p>
+                            {% if uni.url %}
+                                <a class="universities__link" href="{{ uni.url }}" target="_blank">Visit Website</a>
+                            {% endif %}
+                        </li>
                     {% endfor %}
-                >
-                    <p>Average temperature range for each month:</p>
-                    <div class="temp-range-container" data-month="January">
-                        <div class="temp-range" id="jan"></div>
-                    </div>    
-                    <div class="temp-range-container" data-month="February">
-                        <div class="temp-range" id="feb"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="March">
-                        <div class="temp-range" id="mar"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="April">
-                        <div class="temp-range" id="apr"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="May">
-                        <div class="temp-range" id="may"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="June">
-                        <div class="temp-range" id="jun"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="July">
-                        <div class="temp-range" id="jul"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="August">
-                        <div class="temp-range" id="aug"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="September">
-                        <div class="temp-range" id="sep"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="October">
-                        <div class="temp-range" id="oct"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="November">
-                        <div class="temp-range" id="nov"></div>
-                    </div>
-                    <div class="temp-range-container" data-month="December">
-                        <div class="temp-range" id="dec"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="budget" id="budget">
-            <div class="budget__container container">
-                <h2 class="budget__title">Budget</h2>
-                <h3 class="budget__subtitle">Monthly breakdown</h3>
-                <div class="budget__breakdown">
-                    <canvas class="budget__chart" id="budgetPieChart"></canvas>
-                    <div class="budget__table">
-                        <div class="budget__item">
-                            <span class="budget__label">💰 Total</span>
-                            <span class="budget__value">€<span id="totalBudget">{{ city.monthly_budget }}</span></span>
-                        </div>
-                        <div class="budget__item">
-                            <span class="budget__label">🔑 Rent</span>
-                            <span class="budget__value">€<span id="rentBudget">{{ city.rent_budget if city.rent_budget is not none else '-' }}</span></span>
-                        </div>
-                        <div class="budget__item">
-                            <span class="budget__label">🛒 Groceries</span>
-                            <span class="budget__value">€<span id="groceriesBudget">{{ city.groceries_budget if city.groceries_budget is not none else '-' }}</span></span>
-                        </div>
-                        <div class="budget__item">
-                            <span class="budget__label">🚀 Transport</span>
-                            <span class="budget__value">€<span id="transportBudget">{{ city.transport_budget if city.transport_budget is not none else '-' }}</span></span>
-                        </div>
-                        <div class="budget__item">
-                            <span class="budget__label">🎉 Fun!</span>
-                            <span class="budget__value">€{{ city.monthly_budget - city.rent_budget - city.groceries_budget }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="universities" id="universities">
-            <div class="universities__container container">
-                <h2 class="universities__title">Universities</h2>
-                <div class="universities__map" id="map"></div>
-                {% if city.universities %}
-                    <ol class="universities__list">
-                        {% for uni in city.universities %}
-                            <li class="universities__item" data-index="{{ loop.index }}">
-                                <h3 class="universities__name">{{ uni.english_name if uni.english_name else uni.name }}</h3>
-                                <p class="universities__details">{{ city.country_emoji }} {{ uni.name }}</p>
-                                <p class="universities__code">Erasmus Code: {{ uni.erasmus_code }}</p>
-                                <p class="universities__category">Category: {{ uni.category }}</p>
-                                <p class='universities__total-students'>Students: {{ '{:,}'.format(uni.total_students) if uni.total_students else 'N/A' }}</p>
-                                {% if uni.url %}
-                                    <a class="universities__link" href="{{ uni.url }}" target="_blank">Visit Website</a>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ol>
-                {% else %}
-                    <p>No universities found in this city.</p>
-                {% endif %}
-            </div>
-        </section>
-    </main>
-    
-    <footer class="footer">
-        <div class="footer__container container">
-            <a href="{{ url_for('index') }}" class="footer__back-button">← Back to Cities</a>
-            <p class="footer__copyright">© 2024 erasmoon</p>
+                </ol>
+            {% else %}
+                <p>No universities found in this city.</p>
+            {% endif %}
         </div>
-    </footer>
+    </section>
+{% endblock %}
 
-    <!-- Feedback Button Component -->
-    <button id="feedbackButton" class="feedback-button">📣</button>
-    <!-- Feedback Popup Component -->
-    <div id="feedbackPopup" class="feedback-popup popup-overlay">
-        <div class="feedback-popup__content popup-content">
-            <button class="feedback-popup__close-button popup-close-button" id="closeFeedback" aria-label="Close feedback popup">&times;</button>
-            <h2 class="feedback-popup__title">I would really appreciate your feedback! - Michał, the creator of erasmoon</h2>
-            <form id="feedbackForm" class="feedback-popup__form">
-                <textarea id="feedbackText" rows="4" placeholder="Your feedback here..." class="feedback-popup__textarea"></textarea>
-                <br>
-                <button type="submit" class="feedback-popup__submit-button">Submit</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add this new popup for email submission -->
-    <div id="joinPopup" class="join-popup popup-overlay">
-        <div class="join-popup__content popup-content">
-            <button class="join-popup__close-button popup-close-button" id="closeJoin" aria-label="Close join popup">&times;</button>
-            <h2 class="join-popup__title">Join erasmoon 🚀</h2>
-            <form id="joinForm" class="join-popup__form">
-                <input type="email" id="emailInput" placeholder="Your email address" class="join-popup__input" required>
-                <button type="submit" class="join-popup__submit-button">Join</button>
-                <p class="join-popup__gdpr-notice"><small>I will use your email address to tell you when the service is ready. I will not share your email address with anyone else.
-                <br><br>
-                By clicking join, you agree to the processing of your email address for this purpose.</small></p>
-                
-            </form>
-            <p id="joinMessage" class="join-popup__message"></p>
-        </div>
-    </div>
-
+{% block extra_scripts %}
     <!-- City Data -->
     <script id="city-data" type="application/json">
         {
@@ -286,10 +231,5 @@
         }
     </script>
 
-    <!-- Scripts -->
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-</body>
-</html>
+{% endblock %}

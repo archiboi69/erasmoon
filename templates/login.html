@@ -1,10 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Login - erasmoon{% endblock %}
+
+{% block content %}
 <h2>Login</h2>
 <form id="login-form">
     <input type="email" name="email" required placeholder="Enter your email">
     <button type="submit">Send Login Link</button>
 </form>
 <div id="message"></div>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -26,3 +33,4 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     });
 });
 </script>
+{% endblock %}
