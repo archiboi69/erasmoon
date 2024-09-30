@@ -689,8 +689,6 @@
          */
         resetCardStates: function () {
             this.lastTouchedCard = null;
-            console.log('Resetting card states');
-            console.log('this.cityCards:', this.cityCards);
             this.cityCards.forEach((card) => {
                 card.classList.remove('show-metrics');
                 const tapForDetails = card.querySelector('.city-grid__tap-for-details');
@@ -1061,7 +1059,6 @@
         
             const bar = document.createElement('div');
             bar.className = `temp-bar`;
-            console.log('Created temp-bar div')
         
             const totalRange = TEMP_RANGE.MAX - TEMP_RANGE.MIN;
             const rangeWidth = ((high - low) / totalRange) * 100;
