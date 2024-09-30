@@ -23,9 +23,9 @@ primary_region = 'waw'
   size = 'shared-cpu-1x'
   memory = 512
 
-[mounts]
-  source = "litefs"
-  destination = "/var/lib/litefs"
+#[mounts]
+#  source = "litefs"
+#  destination = "/var/lib/litefs"
 
 [processes]
   app = "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8081"
