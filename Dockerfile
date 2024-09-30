@@ -26,7 +26,7 @@ COPY . .
 EXPOSE 8080
 
 # Copy language data
-COPY data/europeans_and_their_languages_2024_summed.csv /code/data/
+COPY ./data/europeans_and_their_languages_2024_summed.csv /code/data/
 
 # Use LiteFS as the entrypoint
 ENTRYPOINT litefs mount
