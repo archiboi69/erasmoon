@@ -4,28 +4,34 @@
 #
 
 app = 'erasmoon'
-primary_region = 'waw'
+primary_region = 'mad'
 
 [build]
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = 'stop'
-  auto_start_machines = true
-  min_machines_running = 0
+  auto_stop_machines = "stop" # Fly Proxy stops Machines based on traffic
+  auto_start_machines = true # Fly Proxy starts Machines based on traffic 
+  min_machines_running = 0 # No. of Machines to keep running in primary region
   processes = ['app']
 
 [[http_service.domains]]
   names = ["erasmoon.com", "www.erasmoon.com"]
 
 [[vm]]
+  region = "mad"
+  size = 'shared-cpu-1x'
+  memory = 512
+
+[[vm]]
+  region = "waw"
   size = 'shared-cpu-1x'
   memory = 512
 
 [mounts]
-  source="erasmoon_data"
-  destination="/data"
+  source = "litefs"
+  destination = "/var/lib/litefs"
 
 [processes]
-  app = "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8080"
+  app = "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8081"
