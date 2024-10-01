@@ -340,27 +340,54 @@
          * @param {HTMLElement} card - The city card element.
          */
         setupCityCardEventListeners: function (card) {
-            card.addEventListener('click', function(event) {
+            card.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const link = card.closest('.city-grid__link');
                 const tapForDetails = card.querySelector('.city-grid__tap-for-details');
+
+                // Hide metrics for all other cards
+                this.cityCards.forEach((otherCard) => {
+                    if (otherCard !== card) {
+                        otherCard.classList.remove('show-metrics');
+                        const otherTapForDetails = otherCard.querySelector('.city-grid__tap-for-details');
+                        if (otherTapForDetails) {
+                            otherTapForDetails.style.display = 'none';
+                        }
+                    }
+                });
+
                 // Check if the device does not support hover (mobile devices)
                 if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
-                    // If metrics are not shown yet
                     if (!card.classList.contains('show-metrics')) {
-                        event.preventDefault(); // Prevent navigation
-                        card.classList.add('show-metrics'); // Show metrics
-                        
+                        // First tap: Show metrics
+                        card.classList.add('show-metrics');
                         if (tapForDetails) {
                             tapForDetails.style.display = 'block';
                         }
                     } else {
-                        // Metrics are already shown, allow navigation to details
-                        // Optionally, remove 'show-metrics' class after navigation
+                        // Second tap: Check auth and navigate
+                        if (!this.isUserLoggedIn()) {
+                            const authPopup = document.getElementById('authPopup');
+                            authPopup.style.display = 'flex';
+                        } else {
+                            window.location.href = link.href;
+                        }
+                    }
+                } else {
+                    // For devices with hover support, check auth and navigate immediately
+                    if (!this.isUserLoggedIn()) {
+                        const authPopup = document.getElementById('authPopup');
+                        authPopup.style.display = 'flex';
+                    } else {
+                        window.location.href = link.href;
                     }
                 }
             });
 
             // Add event listener to remove show-metrics and hide tapForDetails when clicked outside of card
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', (event) => {
                 if (!card.contains(event.target)) {
                     card.classList.remove('show-metrics');
                     const tapForDetails = card.querySelector('.city-grid__tap-for-details');
