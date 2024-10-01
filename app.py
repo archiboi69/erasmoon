@@ -175,6 +175,7 @@ def join_waitlist():
             return jsonify({'success': False, 'message': 'Error adding to waitlist'}), 500
 
 @app.route("/callback")
+@primary_region_required
 def callback():
     auth0.authorize_access_token()
     resp = auth0.get('userinfo')
@@ -220,6 +221,7 @@ def login():
     return auth0.authorize_redirect(redirect_uri=url_for('callback', _external=True))
 
 @app.route("/logout")
+@primary_region_required
 def logout():
     session.clear()
     return redirect(
