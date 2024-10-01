@@ -1,17 +1,20 @@
-import os
-from dotenv import load_dotenv
+import json
 import logging
-import sys
-from flask import Flask, render_template, request, redirect, jsonify, url_for, session, make_response
-from data_manager import DataManager, Config
-from models import Feedback, Subscriber
-from datetime import datetime
+import os
 import re
-from helpers import sanitize_filename
-from flask_mail import Mail, Message
+import sys
+from datetime import datetime
 from functools import wraps
-from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
+
+from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
+from flask import Flask, jsonify, make_response, redirect, render_template, request, session, url_for
+from flask_mail import Mail, Message
+
+from data_manager import Config, DataManager
+from helpers import sanitize_filename
+from models import Feedback, User
 
 # Load environment variables from .env file for local development
 if os.environ.get('FLASK_ENV') != 'production':
@@ -153,31 +156,55 @@ def join_waitlist():
     
     with data_manager.database_manager.get_session() as db:
         try:
-            existing_subscriber = db.query(Subscriber).filter_by(email=email).first()
-            if existing_subscriber:
-                return jsonify({'success': False, 'message': 'This email is already subscribed'}), 400
+            existing_user = db.query(User).filter_by(email=email).first()
+            if existing_user:
+                return jsonify({'success': False, 'message': 'This email is already registered'}), 400
 
-            new_subscriber = Subscriber(email=email)
-            db.add(new_subscriber)
+            new_user = User(email=email, auth0_id=f"waitlist_{email}")
+            db.add(new_user)
             db.commit()
-            logger.info(f"New subscriber added: {email}")
+            logger.info(f"New user added to waitlist: {email}")
             return jsonify({'success': True, 'message': 'Successfully added to waitlist'}), 200
         except Exception as e:
             db.rollback()
-            logger.error(f"Error adding subscriber: {str(e)}")
+            logger.error(f"Error adding user to waitlist: {str(e)}")
             return jsonify({'success': False, 'message': 'Error adding to waitlist'}), 500
-
-
 
 @app.route("/callback")
 def callback():
     token = auth0.authorize_access_token()
-    session["user"] = token
+    resp = auth0.get('userinfo')
+    userinfo = resp.json()
+
+    # Preview user info JSON
+    print("User info from Auth0:", json.dumps(userinfo, indent=2))
+
+    # Store the user info in Flask session
+    session["jwt_payload"] = userinfo
+    session["user"] = {
+        "user_id": userinfo["sub"],
+        "email": userinfo["email"],
+    }
+
+    # Create or update user in local database
+    with data_manager.database_manager.get_session() as db:
+        user = db.query(User).filter_by(auth0_id=userinfo["sub"]).first()
+        if not user:
+            user = User(auth0_id=userinfo["sub"], email=userinfo["email"])
+            db.add(user)
+        user.last_login = datetime.utcnow()
+        db.commit()
+
     return redirect(url_for('index'))
 
 @app.route('/login')
 def login():
-    return auth0.authorize_redirect(redirect_uri=url_for('callback', _external=True))
+    if os.environ.get('FLASK_ENV') == 'production':
+        callback_url = url_for('callback', _external=True, _scheme='https')
+    else:
+        callback_url = url_for('callback', _external=True, _scheme='http')
+    
+    return auth0.authorize_redirect(redirect_uri=callback_url)
 
 @app.route("/logout")
 def logout():

@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, BigInteger, Numeric, Index, Text, DateTime, Boolean
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
-import uuid
 
 
 Base = declarative_base()
@@ -187,24 +186,6 @@ class Feedback(Base):
     def __repr__(self):
         return f'<Feedback {self.id}>'
 
-class Subscriber(Base):
-    __tablename__ = 'subscribers'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String(120), unique=True, nullable=False)
-    is_active = Column(Boolean, default=True, nullable=False)
-    date_joined = Column(DateTime, server_default=func.now())
-    last_login = Column(DateTime, nullable=True)
-    login_token = Column(String(64), unique=True, nullable=True)
-    token_expiry = Column(DateTime, nullable=True)
-
-    def __repr__(self):
-        return f'<Subscriber {self.email}>'
-
-    @staticmethod
-    def generate_token():
-        return uuid.uuid4().hex
-
 class Language(Base):
     __tablename__ = 'languages'
     
@@ -216,3 +197,17 @@ class Language(Base):
 
     def __repr__(self):
         return f"<Language(id={self.id}, language='{self.language}', country='{self.country}', percentage={self.percentage})>"
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    auth0_id = Column(String(64), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
+    is_premium = Column(Boolean, default=False, nullable=False)
+    premium_expiry = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    last_login = Column(DateTime, nullable=True)
+
+    def __repr__(self):
+        return f'<User {self.email}>'
