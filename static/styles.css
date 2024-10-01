@@ -97,7 +97,6 @@ section:last-of-type {
 .footer {
     border-radius: var(--border-radius-base);
     margin: 10px;
-    background-color: var(--color-primary);
     color: var(--color-text);
     padding: 10px 0;
 }
@@ -136,20 +135,19 @@ section:last-of-type {
 }
 
 .header__action-button {
-    background-color: transparent;
+    background-color: var(--color-primary);
     color: var(--color-text);
     font-size: 1rem;
     font-weight: bold;
-    border: 2px solid var(--color-text);
-    padding: 8px 16px;
+    border: none;
+    padding: 10px 20px;
     border-radius: var(--border-radius-small);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
 .header__action-button:hover {
-    background-color: var(--color-text);
-    color: var(--color-primary);
+    background-color: var(--color-secondary);
 }
 
 /* Responsive adjustments */
@@ -182,7 +180,8 @@ section:last-of-type {
 }
 
 .banner h1 {
-    font-size: 2.5rem;
+    font-size: 1.5em;
+    line-height: 1.2;
     color: var(--color-text);
     margin-bottom: 15px;
 }
