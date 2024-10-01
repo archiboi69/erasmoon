@@ -30,6 +30,11 @@
   
       // Initialize functions
       const app = {
+        // Add the isUserLoggedIn function here, as a method of the app object
+        isUserLoggedIn: function() {
+            return sessionStorage.getItem('user') !== null;
+        },
+
         // Common properties
         moonScoreMapping: {
             '0.00': '🌑🌑🌑🌑🌑',
@@ -124,18 +129,16 @@
          * Sets up the auth popup functionality.
          */
         setupAuthPopup: function () {
+            const authButton = document.getElementById('authButton');
+            const authPopup = document.getElementById('authPopup');
+            const closeAuth = document.getElementById('closeAuth');
+
             if (authButton && authPopup) {
-                authButton.addEventListener('click', () => {
+                authButton.addEventListener('click', (e) => {
+                    e.preventDefault();
                     if (authButton.textContent.trim() === 'Logout') {
                         // Handle logout
-                        fetch('/logout')
-                            .then(response => {
-                                if (response.ok) {
-                                    location.reload();
-                                } else {
-                                    console.error('Logout failed');
-                                }
-                            });
+                        window.location.href = '/logout';
                     } else {
                         authPopup.style.display = 'flex';
                     }
@@ -147,44 +150,6 @@
                     authPopup.style.display = 'none';
                 });
             }
-
-            if (authForm) {
-                authForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById('emailInput').value;
-                    
-                    try {
-                        const response = await fetch('/login', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({ email: email }),
-                        });
-
-                        const data = await response.json();
-
-                        if (response.ok) {
-                            authMessage.textContent = data.message;
-                            authMessage.style.color = 'green';
-                            // Close the popup after successful login
-                            setTimeout(() => {
-                                document.getElementById('authPopup').style.display = 'none';
-                                // Reload the current page
-                                window.location.reload();
-                            }, 2000);
-                        } else {
-                            authMessage.textContent = data.message || 'An error occurred';
-                            authMessage.style.color = 'red';
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        authMessage.textContent = 'An error occurred. Please try again.';
-                        authMessage.style.color = 'red';
-                    }
-                });
-            }
         },
   
         /**
@@ -193,58 +158,19 @@
         setupAuthRedirect: function () {
             console.log('Setting up auth redirect');
             const cityLinks = document.querySelectorAll('.city-grid__link');
+            const authPopup = document.getElementById('authPopup');
+
             cityLinks.forEach(link => {
-                link.addEventListener('click', function(event) {
+                link.addEventListener('click', (event) => {
                     event.preventDefault();
-                    event.stopPropagation(); // Stop the event from bubbling up
-                    console.log('City link clicked:', this.href);
+                    event.stopPropagation();
+                    console.log('City link clicked:', link.href);
                     
-                    // Check if we're already processing a click for this link
-                    if (this.dataset.processing) {
-                        return;
+                    if (!this.isUserLoggedIn()) {
+                        authPopup.style.display = 'flex';
+                    } else {
+                        window.location.href = link.href;
                     }
-                    
-                    // Set a flag to indicate we're processing this link
-                    this.dataset.processing = 'true';
-                    
-                    const href = this.getAttribute('href');
-                    fetch(href, {
-                        method: 'GET',
-                        credentials: 'same-origin'
-                    })
-                    .then(response => {
-                        console.log('Response status:', response.status);
-                        if (response.status === 401) {
-                            console.log('Unauthorized response received');
-                            return response.json();
-                        }
-                        if (!response.ok) {
-                            console.log('Response not OK');
-                            throw new Error('Network response was not ok');
-                        }
-                        console.log('Response OK, getting text');
-                        return response.text().then(html => ({isHtml: true, content: html}));
-                    })
-                    .then(data => {
-                        if (data.isHtml) {
-                            console.log('Received HTML, length:', data.content.length);
-                            document.open();
-                            document.write(data.content);
-                            document.close();
-                            window.history.pushState({}, '', href);
-                        } else if (data.redirect === 'auth_popup') {
-                            console.log('Showing auth popup');
-                            document.getElementById('authPopup').style.display = 'flex';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        window.location.href = href;
-                    })
-                    .finally(() => {
-                        // Remove the processing flag when we're done
-                        delete this.dataset.processing;
-                    });
                 });
             });
         },

@@ -21,7 +21,7 @@
             </div>
             <div class="header__actions">
                 <button id="authButton" class="header__action-button">
-                    {% if session.get('subscriber_id') %}
+                    {% if session.get('user') %}
                         Logout
                     {% else %}
                         Login
@@ -61,15 +61,16 @@
     <div id="authPopup" class="auth-popup popup-overlay" style="display: none;">
         <div class="auth-popup__content popup-content">
             <button class="auth-popup__close-button popup-close-button" id="closeAuth" aria-label="Close authentication popup">&times;</button>
-            <h2 class="auth-popup__title" id="authTitle">Login to erasmoon 🚀</h2>
-            <form id="authForm" class="auth-popup__form">
-                <input type="email" id="emailInput" placeholder="Your email address" class="auth-popup__input" required>
-                <button type="submit" class="auth-popup__submit-button" id="authSubmitButton">Login</button>
-                <p class="auth-popup__gdpr-notice"><small id="gdprNotice">I will use your email address to tell you when the service is ready. I will not share your email address with anyone else.
-                <br><br>
-                By clicking join, you agree to the processing of your email address for this purpose.</small></p>
-            </form>
-            <p id="authMessage" class="auth-popup__message"></p>
+            <h2 class="auth-popup__title">Login to erasmoon 🚀</h2>
+            <div class="auth-popup__benefits">
+                <p>By logging in, you'll get access to:</p>
+                <ul>
+                    <li>Detailed city view with monthly budget breakdown</li>
+                    <li>Comprehensive weather information</li>
+                    <li>Complete list of universities in each city</li>
+                </ul>
+            </div>
+            <a href="{{ url_for('login') }}" class="auth-popup__login-button">Login</a>
         </div>
     </div>
 

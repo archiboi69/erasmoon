@@ -172,39 +172,48 @@ def join_waitlist():
 
 @app.route("/callback")
 def callback():
-    token = auth0.authorize_access_token()
+    auth0.authorize_access_token()
     resp = auth0.get('userinfo')
     userinfo = resp.json()
 
-    # Preview user info JSON
-    print("User info from Auth0:", json.dumps(userinfo, indent=2))
-
-    # Store the user info in Flask session
-    session["jwt_payload"] = userinfo
     session["user"] = {
         "user_id": userinfo["sub"],
         "email": userinfo["email"],
+        "name": userinfo['name'],
+        "picture": userinfo.get('picture',''),
+        "email_verified": userinfo.get('email_verified',False)
     }
 
     # Create or update user in local database
     with data_manager.database_manager.get_session() as db:
         user = db.query(User).filter_by(auth0_id=userinfo["sub"]).first()
         if not user:
-            user = User(auth0_id=userinfo["sub"], email=userinfo["email"])
+            user = User(
+                auth0_id=userinfo["sub"],
+                email=userinfo["email"],
+                name=userinfo['name'],
+                picture=userinfo.get("picture", ""),
+                email_verified=userinfo.get("email_verified", False)
+            )
             db.add(user)
+        else:
+            user.name = userinfo['name']
+            user.picture = userinfo.get("picture", user.picture)
+            user.email_verified = userinfo.get("email_verified", user.email_verified)
         user.last_login = datetime.utcnow()
         db.commit()
 
-    return redirect(url_for('index'))
+    # Set user in sessionStorage and reload the page
+    return """
+    <script>
+        sessionStorage.setItem('user', JSON.stringify({user}));
+        window.location.href = '{url}';
+    </script>
+    """.format(user=json.dumps(session["user"]), url=url_for('index'))
 
 @app.route('/login')
 def login():
-    if os.environ.get('FLASK_ENV') == 'production':
-        callback_url = url_for('callback', _external=True, _scheme='https')
-    else:
-        callback_url = url_for('callback', _external=True, _scheme='http')
-    
-    return auth0.authorize_redirect(redirect_uri=callback_url)
+    return auth0.authorize_redirect(redirect_uri=url_for('callback', _external=True))
 
 @app.route("/logout")
 def logout():
