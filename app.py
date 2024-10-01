@@ -126,7 +126,6 @@ def city_detail(eurostat_code):
         return render_template('city_detail.html', city=city_full_details)
 
 @app.route('/submit_feedback', methods=['POST'])
-@login_required
 @primary_region_required
 def submit_feedback():
     content = request.json.get('feedback')
