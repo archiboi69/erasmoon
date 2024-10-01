@@ -772,38 +772,54 @@ section:last-of-type {
     color: var(--color-text);
 }
 
-.auth-popup__input {
-    width: 100%;
-    padding: 10px;
+.auth-popup__benefits {
     margin-bottom: 20px;
-    border: 1px solid var(--color-text-faint);
-    border-radius: var(--border-radius-small);
-    background-color: var(--color-background-secondary);
-    color: var(--color-text);
-}
-
-.auth-popup__gdpr-notice {
-    margin-top: 15px;
-    font-size: 0.9em;
     color: var(--color-text-faint);
 }
 
-.auth-popup__submit-button {
+.auth-popup__benefits ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.auth-popup__benefits li {
+    margin-bottom: 5px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.auth-popup__benefits li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+}
+
+.auth-popup__login-button {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
     background-color: var(--color-primary);
     color: var(--color-text);
-    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
     border: none;
     border-radius: var(--border-radius-small);
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
-.auth-popup__submit-button:hover {
+.auth-popup__login-button:hover {
     background-color: var(--color-secondary);
 }
 
 .auth-popup__message {
     margin-top: 10px;
     font-weight: bold;
+    text-align: center;
 }
 
 /* ===================================

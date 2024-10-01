@@ -40,4 +40,7 @@ proxy:
   db: "cities.db"
 
 exec:
+  - cmd: "flask db_upgrade"
+    if-candidate: true
+
   - cmd: "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8081"
