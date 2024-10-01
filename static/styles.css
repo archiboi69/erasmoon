@@ -744,24 +744,30 @@ section:last-of-type {
 =================================== */
 
 .feedback-popup__content {
-    /* Override max-width if necessary */
-    max-width: 500px; /* Specific to feedback popup */
+    max-width: 500px;
 }
 
 .feedback-popup__title {
     font-size: 24px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: var(--color-text);
+}
+
+.feedback-popup__message {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
 }
 
 .feedback-popup__textarea {
     width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: var(--border-radius-small);
     background-color: var(--color-background-secondary);
     color: var(--color-text);
+    font-size: 14px;
 }
 
 .feedback-popup__submit-button {
@@ -771,10 +777,27 @@ section:last-of-type {
     border: none;
     border-radius: var(--border-radius-small);
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 .feedback-popup__submit-button:hover {
-    background-color: var(--color-secondary); /* Adjust as needed */
+    background-color: var(--color-secondary);
+}
+
+.feedback-popup__contact {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.feedback-popup__contact a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.feedback-popup__contact a:hover {
+    text-decoration: underline;
 }
 
 /* ===================================
@@ -837,6 +860,7 @@ section:last-of-type {
 
 .auth-popup__disclaimer {
     margin-top: 10px;
+    margin-bottom: 10px;
     font-size: 14px;
     color: var(--color-text-faint);
 }
