@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import logging
 import sys
-from flask import Flask, render_template, request, redirect, jsonify, url_for, session
+from flask import Flask, render_template, request, redirect, jsonify, url_for, session, make_response
 from data_manager import DataManager, Config
 from models import Feedback, Subscriber
 from datetime import datetime, timedelta
@@ -11,7 +11,6 @@ from helpers import sanitize_filename
 from flask_mail import Mail, Message
 from sqlalchemy.exc import IntegrityError
 from functools import wraps
-import secrets
 
 # Load environment variables from .env file for local development
 if os.environ.get('FLASK_ENV') != 'production':
@@ -44,6 +43,19 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 
 mail = Mail(app)
+
+def is_primary_region():
+    return os.environ.get('FLY_REGION') == os.environ.get('PRIMARY_REGION')
+
+def primary_region_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not is_primary_region():
+            response = make_response()
+            response.headers['fly-replay'] = f"region={os.environ.get('PRIMARY_REGION')}"
+            return response
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.before_request
 def redirect_www():
@@ -97,6 +109,7 @@ def city_detail(eurostat_code):
         return render_template('city_detail.html', city=city_full_details)
 
 @app.route('/submit_feedback', methods=['POST'])
+@primary_region_required
 def submit_feedback():
     content = request.json.get('feedback')
     if content:
@@ -114,6 +127,7 @@ def submit_feedback():
     return jsonify({"message": "No feedback content provided"}), 400
 
 @app.route('/join_waitlist', methods=['POST'])
+@primary_region_required
 def join_waitlist():
     data = request.json
     email = data.get('email')
@@ -143,6 +157,7 @@ def join_waitlist():
             return jsonify({'success': False, 'message': 'Error adding to waitlist'}), 500
 
 @app.route('/login', methods=['GET', 'POST'])
+@primary_region_required
 def login():
     if request.method == 'POST':
         if request.is_json:
@@ -182,6 +197,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/verify-login/<token>')
+@primary_region_required
 def verify_login(token):
     with data_manager.database_manager.get_session() as db:
         subscriber = db.query(Subscriber).filter_by(login_token=token).first()

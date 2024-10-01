@@ -83,9 +83,9 @@
                 </div>
             </div>
             <div class="overview__subsection overview__subsection--stats">
-                <p><strong>Population:</strong> {{ '{:,}'.format(city.population) }}</p>
-                <p><strong>Erasmus Population:</strong> {{ '{:,}'.format(city.erasmus_population) }}</p>
-                <p><strong>University Count:</strong> {{ '{:,}'.format(city.university_count) }}</p>
+                <p><strong>Population:</strong> {{ '{:,}'.format(city.population) if city.population else 'N/A' }}</p>
+                <p><strong>Erasmus students:</strong> {{ '{:,}'.format(city.erasmus_population) if city.erasmus_population else 'N/A' }}</p>
+                <p><strong>Universities:</strong> {{ '{:,}'.format(city.university_count) if city.university_count else 'N/A' }}</p>
             </div>
             {% if city.overview_text %}
                 <div class="overview__subsection overview__subsection--guide">
@@ -160,7 +160,7 @@
                 <div class="budget__table">
                     <div class="budget__item">
                         <span class="budget__label">💰 Total</span>
-                        <span class="budget__value">€<span id="totalBudget">{{ city.monthly_budget }}</span></span>
+                        <span class="budget__value">€<span id="totalBudget">{{ city.monthly_budget if city.monthly_budget is not none else '-' }}</span></span>
                     </div>
                     <div class="budget__item">
                         <span class="budget__label">🔑 Rent</span>
