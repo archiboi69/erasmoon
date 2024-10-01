@@ -160,7 +160,7 @@
                 <div class="budget__table">
                     <div class="budget__item">
                         <span class="budget__label">💰 Total</span>
-                        <span class="budget__value">€<span id="totalBudget">{{ city.monthly_budget }}</span></span>
+                        <span class="budget__value">€<span id="totalBudget">{{ city.monthly_budget if city.monthly_budget is not none else '-' }}</span></span>
                     </div>
                     <div class="budget__item">
                         <span class="budget__label">🔑 Rent</span>
