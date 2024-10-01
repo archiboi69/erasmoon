@@ -30,8 +30,8 @@ primary_region = 'mad'
   memory = 512
 
 [mounts]
-  source="erasmoon_data"
-  destination="/data"
+  source = "litefs"
+  destination = "/var/lib/litefs"
 
 [processes]
   app = "gunicorn app:app --workers=2 --threads=2 --bind=0.0.0.0:8081"
