@@ -172,8 +172,27 @@ section:last-of-type {
 /* Styles for the banner */
 
 .banner {
-    padding: 10px;
+    padding: 20px;
     border: none;
+}
+
+.banner__content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.banner h1 {
+    font-size: 2.5rem;
+    color: var(--color-text);
+    margin-bottom: 15px;
+}
+
+.banner h2 {
+    font-size: 1.2rem;
+    color: var(--color-text-faint);
+    font-weight: 400;
+    line-height: 1.5;
+    max-width: 600px;
 }
 
 /* ===================================
@@ -814,6 +833,12 @@ section:last-of-type {
 
 .auth-popup__login-button:hover {
     background-color: var(--color-secondary);
+}
+
+.auth-popup__disclaimer {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--color-text-faint);
 }
 
 .auth-popup__message {

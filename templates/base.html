@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}erasmoon - your perfect erasmus{% endblock %}</title>
+    <meta name="description" content="Discover the best cities for your Erasmus exchange. Compare student accommodation, budgets, and top universities to find the perfect place for your study abroad experience." />
+
+
+    <title>{% block title %}Best Cities for Erasmus | Student Accommodation & Budget{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
@@ -71,6 +74,7 @@
                 </ul>
             </div>
             <a href="{{ url_for('login') }}" class="auth-popup__login-button">Login</a>
+            <p class="auth-popup__disclaimer">By logging in, you agree to share your email with me.<br>I will use it for the functioning of erasmoon and to send you updates.</p>
         </div>
     </div>
 
