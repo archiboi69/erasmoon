@@ -11,6 +11,10 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, jsonify, make_response, redirect, render_template, request, session, url_for
 from flask_mail import Mail, Message
+from flask.cli import with_appcontext
+import click
+from alembic.config import Config as AlembicConfig
+from alembic import command
 
 from data_manager import Config, DataManager
 from helpers import sanitize_filename
@@ -241,6 +245,14 @@ def internal_error(error):
 
 # Make this function available in templates
 app.jinja_env.filters['sanitize_filename'] = sanitize_filename
+
+@app.cli.command("db_upgrade")
+@with_appcontext
+def db_upgrade():
+    """Apply database migrations."""
+    alembic_cfg = AlembicConfig("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
+    click.echo("Database schema updated.")
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8081))
