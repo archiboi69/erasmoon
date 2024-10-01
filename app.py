@@ -5,12 +5,13 @@ import sys
 from flask import Flask, render_template, request, redirect, jsonify, url_for, session, make_response
 from data_manager import DataManager, Config
 from models import Feedback, Subscriber
-from datetime import datetime, timedelta
+from datetime import datetime
 import re
 from helpers import sanitize_filename
 from flask_mail import Mail, Message
-from sqlalchemy.exc import IntegrityError
 from functools import wraps
+from authlib.integrations.flask_client import OAuth
+from urllib.parse import quote_plus, urlencode
 
 # Load environment variables from .env file for local development
 if os.environ.get('FLASK_ENV') != 'production':
@@ -44,6 +45,19 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 
 mail = Mail(app)
 
+# Auth0 configuration
+oauth = OAuth(app)
+auth0 = oauth.register(
+    'auth0',
+    client_id=os.environ.get('AUTH0_CLIENT_ID'),
+    client_secret=os.environ.get('AUTH0_CLIENT_SECRET'),
+    api_base_url=f"https://{os.environ.get('AUTH0_DOMAIN')}",
+    client_kwargs={
+        'scope': 'openid profile email',
+    },
+    server_metadata_url=f'https://{os.environ.get("AUTH0_DOMAIN")}/.well-known/openid-configuration',
+)
+
 def is_primary_region():
     return os.environ.get('FLY_REGION') == os.environ.get('PRIMARY_REGION')
 
@@ -65,19 +79,15 @@ def redirect_www():
                 'https://' + request.host[4:] + request.path,
                 code=301
             )
-            
-# Add this decorator to routes that require login
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        print("Checking if user is logged in...")  # Add this line
-        if 'subscriber_id' not in session:
-            print("User is not logged in, returning 401")  # Add this line
-            return jsonify({'redirect': 'auth_popup'}), 401
-        print("User is logged in, proceeding to view")  # Add this line
+        if 'user' not in session:
+            return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-           
+
 @app.route('/')
 def index():
     """
@@ -109,6 +119,7 @@ def city_detail(eurostat_code):
         return render_template('city_detail.html', city=city_full_details)
 
 @app.route('/submit_feedback', methods=['POST'])
+@login_required
 @primary_region_required
 def submit_feedback():
     content = request.json.get('feedback')
@@ -156,77 +167,33 @@ def join_waitlist():
             logger.error(f"Error adding subscriber: {str(e)}")
             return jsonify({'success': False, 'message': 'Error adding to waitlist'}), 500
 
-@app.route('/login', methods=['GET', 'POST'])
-@primary_region_required
-def login():
-    if request.method == 'POST':
-        if request.is_json:
-            email = request.json.get('email')
-        else:
-            email = request.form.get('email')
 
-        if not email:
-            return jsonify({'success': False, 'message': 'Email is required'}), 400
 
-        with data_manager.database_manager.get_session() as db:
-            subscriber = db.query(Subscriber).filter_by(email=email).first()
-            if not subscriber:
-                subscriber = Subscriber(email=email)
-                db.add(subscriber)
-                try:
-                    db.commit()
-                except IntegrityError:
-                    db.rollback()
-                    return jsonify({'success': False, 'message': 'An error occurred. Please try again.'}), 500
-
-            token = Subscriber.generate_token()
-            subscriber.login_token = token
-            subscriber.token_expiry = datetime.utcnow() + timedelta(hours=1)
-            db.commit()
-
-        login_link = url_for('verify_login', token=token, _external=True)
-        send_login_email(email, login_link)
-
-        # Check if the request wants a JSON response
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Login link sent to your email'}), 200
-        else:
-            return redirect(url_for('index'))
-
-    # If it's a GET request or doesn't want JSON, render the login template
-    return render_template('login.html')
-
-@app.route('/verify-login/<token>')
-@primary_region_required
-def verify_login(token):
-    with data_manager.database_manager.get_session() as db:
-        subscriber = db.query(Subscriber).filter_by(login_token=token).first()
-        if subscriber and subscriber.token_expiry > datetime.utcnow():
-            subscriber.last_login = datetime.utcnow()
-            subscriber.login_token = None
-            subscriber.token_expiry = None
-            db.commit()
-            session['subscriber_id'] = subscriber.id
-            return redirect(url_for('index'))
-        else:
-            return render_template('invalid_token.html'), 400
-
-@app.route('/logout')
-def logout():
-    session.pop('subscriber_id', None)
+@app.route("/callback")
+def callback():
+    token = auth0.authorize_access_token()
+    session["user"] = token
     return redirect(url_for('index'))
 
-def send_login_email(email, login_link):
-       try:
-           msg = Message('Your Login Link', recipients=[email])
-           msg.body = f'Click the following link to log in: {login_link}'
-           mail.send(msg)
-           logger.info(f"Login email sent to {email}")
-       except Exception as e:
-           logger.error(f"Failed to send login email to {email}. Error: {str(e)}")
-           raise
+@app.route('/login')
+def login():
+    return auth0.authorize_redirect(redirect_uri=url_for('callback', _external=True))
 
-
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://"
+        + os.environ.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("index", _external=True),
+                "client_id": os.environ.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
 
 @app.errorhandler(404)
 def not_found_error(error):
