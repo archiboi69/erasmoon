@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 - Internal Server Error</title>
-</head>
-<body>
-    <div>
-        <h1>500 - Internal Server Error</h1>
-        <p>Oops! Something went wrong on our end. We're working to fix the issue.</p>
-        <p>Please try again later or contact support if the problem persists.</p>
-        <a href="/">Return to Homepage</a>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}500 - Internal Server Error{% endblock %}
+
+{% block body_class %}error-page{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h1>500 - Internal Server Error</h1>
+    <p>Oops! Something went wrong on my end. I'm working to fix the issue.</p>
+    <p>Please try again later or contact me via feedback button or michal@erasmoon.com </p>
+    <a href="/" class="button">Return to Homepage</a>
+</div>
+{% endblock %}
